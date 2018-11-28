@@ -1,0 +1,20 @@
+{
+    "editor.tabSize": 3,
+    "files.encoding": "cp437",
+    "files.eol": "\r\n",
+    "editor.renderWhitespace": "boundary",
+    "editor.insertSpaces": false,
+    "files.insertFinalNewline": true,
+    "editor.rulers": [80],
+    
+    "[forth]": {
+        "editor.tabSize": 2,
+        "files.encoding": "cp437",
+        "files.trimFinalNewlines": true,
+        "editor.wordWrap": "off",
+        "editor.renderWhitespace": "boundary",
+        "editor.insertSpaces": false,
+        "files.insertFinalNewline": false,
+        "editor.rulers": [40,64],
+    }
+}

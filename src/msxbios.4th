@@ -10,7 +10,7 @@ decimal 3 load ( msxbios )
 decimal 4 6 THRU ( def bios )
 
 MSX definitions
-decimal 7 23 thru ( impl bios )
+decimal 7 25 thru ( impl bios )
 
 decimal
 ----
@@ -286,4 +286,29 @@ code CHGET ( -- char )
    H PUSH
    next
 end-code
+----
+\ BIOS-C@ ( addr -- b )
+
+hex code BIOS-C@ ( addr -- b )
+  H POP     \ POP HL
+  B PUSH    \ PUSH BC
+  fcc0 LDA  \ LD A,[fcc0]
+  000c CALL \ CALL RDSLT
+  EI        \ EI
+  0 H MVI   \ LD H,0
+  A L MOV   \ LD L,A
+  B POP     \ POP BC
+  H PUSH    \ PUSH HL
+  next
+end-code
+----
+\ BIOS60HZ ( -- ), BIOS50HZ ( -- )
+
+hex 
+: BIOS60HZ ( -- )
+   2B bios-c@ 80 and 0= ;
+
+hex
+: BIOS50HZ ( -- )
+   2B bios-c@ 80 and 0<> ;
 ----

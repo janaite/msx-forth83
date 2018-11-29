@@ -5,7 +5,7 @@
 # JANAITE 20181126
 #
 
-FILES=msxbios.blk test-sc2.blk v9990.blk t-delay.4th
+FILES=msxbios.blk test-sc2.blk v9990.blk t-delay.blk
 
 DIST_DIR=dist
 CC=gcc

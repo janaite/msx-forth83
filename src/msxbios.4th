@@ -10,7 +10,7 @@ decimal 3 load ( msxbios )
 decimal 4 6 THRU ( def bios )
 
 MSX definitions
-decimal 7 25 thru ( impl bios )
+decimal 7 28 thru ( impl bios )
 
 decimal
 ----
@@ -312,3 +312,27 @@ hex
 : BIOS50HZ ( -- )
    2B bios-c@ 80 and 0<> ;
 ----
+\ (delayjf) ( jiffy-min -- )
+
+hex FC9E constant #JIFFY
+
+: (delayjf) ( jiffy-min -- )
+  begin
+    dup #JIFFY @ u<=  \ unisgned compare
+  until drop ;
+----
+\ delayjiffy ( u -- )
+hex
+: delayjiffy ( u -- )
+  0            \ convert to double precision number
+  #JIFFY @ 0 d+
+  dup 0= if    \ sum not overflows
+    drop (delayjf) 
+  else 
+    ffff. d- drop
+    begin 
+      dup #JIFFY @ <=  \ signed compare !
+    until drop
+  then ;
+----
+

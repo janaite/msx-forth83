@@ -1,8 +1,16 @@
 
 ----
 
-FORTH definitions
-2 14 thru
+
+only definitions FORTH also
+vocabulary MSXDOS
+
+MSXDOS definitions
+MSXDOS also
+
+decimal 2 15 thru
+
+----
 
 0 constant #FMODE-RW
 1 constant #FMODE-RO
@@ -12,6 +20,7 @@ FORTH definitions
 6 constant #FMODE-WO-INH
 
 ----
+
 : asciizlen ( strz -- u )
   0 swap
   begin dup c@ 0<> while
@@ -25,6 +34,19 @@ FORTH definitions
   repeat drop drop ;
 ----
 
+\ Add a null at the end of string
+: >asciiz ( c-addr u -- )
+  + 0 swap c! ;
+
+\ copy string into PAD area
+: >pad ( c-addr u -- )
+  pad swap ( from to len -- ) move ;
+
+\ copy string into PAD area as a null terminated
+: >padz ( c-addr u -- )
+  tuck ( u c-addr u -- ) >pad 
+  pad ( u pad-addr ) swap >asciiz ;
+----
 \ DOSVER ( --  kernelversionbcd dos2sysversionbcd )
 
 hex code DOSVER ( -- msxdoskernel msxdos2sys )
@@ -66,21 +88,7 @@ hex code (FOPEN) ( mode cstr -- handle error )
   next
 end-code
 ----
-
-\ Add a null at the end of string
-: >asciiz ( c-addr u -- )
-  + 0 swap c! ;
-
-\ copy string into PAD area
-: >pad ( c-addr u -- )
-  pad swap ( from to len -- ) move ;
-
-\ copy string into PAD area as a null terminated
-: >padz ( c-addr u -- )
-  tuck >pad 
-  pad ( u c-addr ) swap >asciiz ;
-----
-\ FOPEN" ( mode -- handle error <string> filename.ext" )
+\ FOPEN" ( -- h err ) FOPEN ( cstr m -- h err )
 
 : FOPENX" ( mode -- )
   ascii " parse ( c-addr u )
@@ -88,13 +96,13 @@ end-code
   pad (FOPEN) ;
 
 : FOPEN" ( -- )
-  0 FOPENX" ;
+  #FMODE-RW FOPENX" ;
 
 : FOPEN ( cstr mode -- handle error )
   -rot >padz
   pad (FOPEN)  ;
 ----
-
+\ FCLOSE ( handle -- error )
 hex code FCLOSE ( handle -- error )
   D POP   B PUSH
   E  B MOV \ B=handle
@@ -107,7 +115,7 @@ hex code FCLOSE ( handle -- error )
   next
 end-code
 ----
-
+\ ENSURE ( handle -- error )
 hex code ENSURE ( handle -- error )
   D POP   B PUSH
   E  B MOV \ B=handle
@@ -120,7 +128,7 @@ hex code ENSURE ( handle -- error )
   next
 end-code
 ----
-
+\ FWRITE ( handle addr len -- size error )
 hex code FWRITE ( handle addr len -- size error )
   B H MOV  C L MOV  ( IP>HL )
   B POP    D POP    XTHL
@@ -137,7 +145,7 @@ hex code FWRITE ( handle addr len -- size error )
   next
 end-code
 ----
-
+\ FREAD ( handle addr len -- size error )
 hex code FREAD ( handle addr len -- size error )
   B H MOV  C L MOV  ( IP>HL )
   B POP    D POP    XTHL
@@ -154,20 +162,22 @@ hex code FREAD ( handle addr len -- size error )
   next
 end-code
 ----
-
-hex code FCREATE ( cstr mode -- handle error )
+\ FCREATE ( c-addr u-len mode -- handle error )
+hex code (FCREATE) ( cstr mode -- handle error )
   H POP  D POP  B PUSH
   H  B MOV \ B = attributes
   L  A MOV \ A = open mode
   44 C MVI \ fn=44h _CREATE
   5  CALL  \ ret: A=error, B=handle
-  0  H MVI
-  B  L MOV
-  0  D MVI
-  A  E MOV \ E = error
+  0  H MVI  B  L MOV \ L = handle
+  0  D MVI  A  E MOV \ E = error
   B  POP  H  PUSH  D  PUSH
   next
 end-code
+
+: FCREATE ( c-addr u-len mode -- handle error )
+  -rot ( mode c-addr u-len )
+  >padz pad swap (FCREATE)  ;
 ----
 
 \ msg in cstr (asciiz)

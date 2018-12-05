@@ -12,6 +12,7 @@ MSX-V9990 definitions
 decimal 2 5 thru      \ constans
 decimal 6 14 thru 
 decimal 15 18 thru \ Scrolls...
+decimal 19 21 thru \ screen mode...
 
 ----
 \ constants
@@ -244,6 +245,64 @@ hex
   n2b ( n -- msb lsb )
   #V9R-SCROLL-BY-RW#0 V9REG+1!             \ bits 7..0
   01 and SCROLL-B-MODE C@ or >V9REGDATA ;  \ bits 8
+----
+
+\ Selection of number of pixels in X direction of image space
+\ (Number of pixels in Y direction is automatically 
+\ calculated from XIMM and CLRM)
+hex
+03 constant #CLRM-16bpp  \ 16 bits/pixel
+02 constant #CLRM-8bpp   \ 8 bits/pixel
+01 constant #CLRM-4bpp   \ 4 bits/pixel
+00 constant #CLRM-2bpp   \ 2 bits/pixel 
+
+hex
+0C constant #XIMM-2048PX \ 2048 pixels
+08 constant #XIMM-1024PX \ 1024 pixels
+04 constant #XIMM-512PX  \ 512 pixels
+00 constant #XIMM-256PX  \ 256 pixels
+----
+
+hex
+20 constant #DCKM=2
+10 constant #DCKM=1
+00 constant #DCKM=0
+
+hex
+C0 constant #DSPM-STANDBY
+80 constant #DSPM-BMP
+40 constant #DSPM-P2
+00 constant #DSPM-P1
+
+----
+
+hex
+00 constant #HSCN=0
+01 constant #HSCN=1
+00 constant #IL=0
+02 constant #IL=1
+00 constant #EO=0
+04 constant #EO=1
+00 constant #PAL=0
+08 constant #PAL=1
+00 constant #SM=0
+10 constant #SM=1
+00 constant #SM1=0
+20 constant #SM1=1
+00 constant #CM25M=0
+40 constant #CM25M=1
+----
+\ SCREEN-P1
+
+: SCREEN-P1 ( -- )
+  #CLRM-4bpp
+  #XIMM-512PX or
+  #DCKM=0 or
+  #DSPM-P1 or
+  #V9R-SCREEN-RW#0 V9REG+1!  \ R#6
+  0 >V9REGDATA               \ R#7
+  0 #V9SYSCTL PC!            \ P#7
+  24 #V9RESERVED PC! ;       \ video9000 superimpose enable?!
 ----
 
 \ http://msxbanzai.tni.nl/v9990/manual.html

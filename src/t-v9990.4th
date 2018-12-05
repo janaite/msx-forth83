@@ -98,7 +98,8 @@ decimal
 : test
    V9INI
    162 #V9R-CTL-RW V9REG!
-   133 #V9R-SCREEN-RW#0  V9REG!
+   #DSPM-BMP #DCKM=0 or #XIMM-512PX or #CLRM-4bpp or \ 133
+     #V9R-SCREEN-RW#0  V9REG!
    0   #V9R-SCREEN-RW#1  V9REG!
    0   #V9R-PALETTEPTR-W V9REG!
    palturbor

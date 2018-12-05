@@ -11,6 +11,7 @@ FORTH definitions
 MSX-V9990 definitions
 decimal 2 5 thru      \ constans
 decimal 6 14 thru 
+decimal 15 18 thru \ Scrolls...
 
 ----
 \ constants
@@ -75,12 +76,15 @@ decimal
 \ V9REG! ( n reg -- )
 
 : V9REG! ( n reg -- )
-  #V9REGSEL  PC!
-  #V9REGDATA PC! ;
+  #V9REGSEL PC!  #V9REGDATA PC! ;
+
+hex
+: V9REG+1! ( n reg -- )
+  3F AND
+  #V9REGSEL PC!  #V9REGDATA PC! ;
 
 : V9REG@ ( reg -- n )
-  #V9REGSEL  PC!
-  #V9REGDATA PC@ ;
+  #V9REGSEL PC!  #V9REGDATA PC@ ;
 ----
 \ V9PALETTE!, V9PALETTE@, V9RGBPALETTE!
 
@@ -148,11 +152,13 @@ end-code
    #V9R-VRAM-W#1 V9REG!   \ MSB
 ;
 ----
-\ >VRAM ( n -- )
+\ >VRAM ( b -- ), >V9REGDATA ( b -- )
 
-: >VRAM ( n -- )
+: >VRAM ( b -- )
    #V9VRAM PC! ;
 
+: >V9REGDATA ( b -- )
+  #V9REGDATA PC!  ;
 ----
 \ DISPLAY ( f -- )
 
@@ -187,6 +193,57 @@ hex
 
 : SPRITES ( f -- )
   IF sprites-enable ELSE sprites-disable THEN ;
+----
+\ Scroll A/B constants and variables
+hex
+00 constant #SCROLL-MODE-ROLLIMAGE
+40 constant #SCROLL-MODE-ROLL256
+80 constant #SCROLL-MODE-ROLL512
+
+variable SCROLL-A-MODE
+#SCROLL-MODE-ROLLIMAGE SCROLL-A-MODE !
+
+variable SCROLL-B-MODE
+#SCROLL-MODE-ROLLIMAGE SCROLL-B-MODE !
+----
+\ SET-SCROLL-A-MODE ( n -- ), SET-SCROLL-B-MODE ( n -- )
+
+hex
+: SET-SCROLL-A-MODE ( n -- )
+  00C0 and SCROLL-A-MODE ! ;
+
+hex
+: SET-SCROLL-B-MODE ( n -- )
+  00C0 and SCROLL-B-MODE ! ;
+----
+\ SCROOL-AX ( n -- ), SCROOL-AY ( n -- )
+
+hex
+: SCROOL-AX ( n -- )
+  dup
+  7 and #V9R-SCROLL-AX-RW#0 V9REG+1!  \ bits 2..0
+  u2/ u2/ u2/ >V9REGDATA ;            \ bits 10..3
+
+hex
+: SCROLL-AY ( n -- )
+  n2b ( n -- msb lsb )
+  #V9R-SCROLL-AY-RW#0 V9REG+1!             \ bits  7..0
+  1F and SCROLL-A-MODE C@ or >V9REGDATA ;  \ bits 12..8
+
+----
+\ SCROOL-BX ( n -- ), SCROLL-BY ( n --)
+
+hex
+: SCROOL-BX ( n -- )
+  dup
+  7 and #V9R-SCROLL-BX-RW#0 V9REG+1!  \ bits 2..0
+  u2/ u2/ u2/ 3F and >V9REGDATA ;     \ bits 10..3
+  
+hex
+: SCROLL-BY ( n --)
+  n2b ( n -- msb lsb )
+  #V9R-SCROLL-BY-RW#0 V9REG+1!             \ bits 7..0
+  01 and SCROLL-B-MODE C@ or >V9REGDATA ;  \ bits 8
 ----
 
 \ http://msxbanzai.tni.nl/v9990/manual.html

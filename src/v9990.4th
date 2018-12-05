@@ -217,10 +217,10 @@ hex
 : SET-SCROLL-B-MODE ( n -- )
   00C0 and SCROLL-B-MODE ! ;
 ----
-\ SCROOL-AX ( n -- ), SCROOL-AY ( n -- )
+\ SCROLL-AX ( n -- ), SCROLL-AY ( n -- )
 
 hex
-: SCROOL-AX ( n -- )
+: SCROLL-AX ( n -- )
   dup
   7 and #V9R-SCROLL-AX-RW#0 V9REG+1!  \ bits 2..0
   u2/ u2/ u2/ >V9REGDATA ;            \ bits 10..3
@@ -232,10 +232,10 @@ hex
   1F and SCROLL-A-MODE C@ or >V9REGDATA ;  \ bits 12..8
 
 ----
-\ SCROOL-BX ( n -- ), SCROLL-BY ( n --)
+\ SCROLL-BX ( n -- ), SCROLL-BY ( n --)
 
 hex
-: SCROOL-BX ( n -- )
+: SCROLL-BX ( n -- )
   dup
   7 and #V9R-SCROLL-BX-RW#0 V9REG+1!  \ bits 2..0
   u2/ u2/ u2/ 3F and >V9REGDATA ;     \ bits 10..3

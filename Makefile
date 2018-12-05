@@ -5,7 +5,9 @@
 # JANAITE 20181126
 #
 
-FILES=msxbios.blk t-sc2.blk v9990.blk t-delay.blk msxdos.blk t-msxdos.blk
+FILES  = msxbios.blk t-sc2.blk t-delay.blk 
+FILES += v9990.blk t-v9990.blk 
+FILES += msxdos.blk t-msxdos.blk
 
 DIST_DIR=dist
 CC=gcc

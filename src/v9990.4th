@@ -304,26 +304,20 @@ hex
   0 #V9SYSCTL PC!            \ P#7
   24 #V9RESERVED PC! ;       \ video9000 superimpose enable?!
 ----
+\ PAT-B-2ADDR, PAT-A-2ADDR ( pat row -- d-addr )
+decimal
+: PAT-OFFSET ( pat -- d-addr )
+   dup
+   32 mod 4 * 0 rot
+   32 / 1024 * 0 D+ ;
 
-\ http://msxbanzai.tni.nl/v9990/manual.html
-\ http://www.map.grauw.nl/resources/video/yamaha_v9990.pdf
-
-hex
-40 constant #XIMM-1024PX
-10 constant #CLRM-4BPP
-80 constant #DSPM-BMP
-00 constant #DCKM-1/4XTAL
-----
-
-: PAT-OFFSET ( pat -- addr )
-   32 mod 4 * swap
-   32 / 1024 * + ;
-
-: DPATA-ADDR ( pat row -- d-addr )
-   swap pat-offset 0 rot
-   128 * 0 D+ ;
+decimal
+: PAT-A-2ADDR ( pat row -- d-addr )
+   128 * 0
+   rot pat-offset 
+   D+ ;
 
 hex
-: DPATB-ADDR ( pat row -- d-addr )
-   40000. D+ ;
+: PAT-B-2ADDR ( pat row -- d-addr )
+   PAT-A-2ADDR 40000. D+ ;
 ----

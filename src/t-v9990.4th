@@ -4,7 +4,7 @@
 
 msx-v9990 also forth definitions
 
-decimal 2 9 thru
+decimal 2 14 thru
 
 ----
 
@@ -51,8 +51,7 @@ variable bmpx
      0 c, 255 c, 255 c,   0 c,
 
 ----
-: bmp1
-   [ hex ] 0. 2vram!!
+: bmp1   [ hex ] 0. 2vram!!
    [ decimal ] 0  >VRAM  255 >VRAM 255 >VRAM 0 >VRAM
    [ hex ] 100 vram!!
    [ decimal ] 15 >vram   0 >vram    0 >vram 240 >vram
@@ -65,7 +64,8 @@ variable bmpx
    [ hex ] 500 vram!!
    [ decimal ] 240 >vram  15 >vram  240 >vram  15 >vram
 [ hex ] 600 vram!! decimal 15 >vram 0 >vram 0 >vram  240 >vram
-[ hex ] 700 vram!! decimal 0 >vram 255 >vram 255 >vram 0 >vram ;
+[ hex ] 700 vram!! decimal 0 >vram 255 >vram 255 >vram 0 >vram
+   ;
 ----
 decimal 
 : bmp2
@@ -104,3 +104,59 @@ decimal
    0   #V9R-PALETTEPTR-W V9REG!
    palturbor
    bmp3 ;
+----
+
+\ PAT-DRAW1 uses color01 and color02
+hex
+: PAT-DRAW1
+ dup 0 pat-a-2addr 2vram!! 11 >vram 12 >vram 21 >vram 11 >vram
+ dup 1 pat-a-2addr 2vram!! 11 >vram 12 >vram 21 >vram 11 >vram
+ dup 2 pat-a-2addr 2vram!! 11 >vram 22 >vram 22 >vram 11 >vram
+ dup 3 pat-a-2addr 2vram!! 22 >vram 22 >vram 22 >vram 22 >vram
+ dup 4 pat-a-2addr 2vram!! 22 >vram 22 >vram 22 >vram 22 >vram
+ dup 5 pat-a-2addr 2vram!! 11 >vram 22 >vram 22 >vram 11 >vram
+ dup 6 pat-a-2addr 2vram!! 11 >vram 12 >vram 21 >vram 11 >vram
+     7 pat-a-2addr 2vram!! 11 >vram 12 >vram 21 >vram 11 >vram
+;
+----
+
+: 2assert ( n1 n2 -- )
+  D= if ." passed! "
+  else ." failed "
+  then ;
+
+----
+decimal
+: test-pnt-a
+  [ decimal ]  0  0 pnt-a-2addr [ hex ] 7C000. 2assert
+  [ decimal ]  0  1 pnt-a-2addr [ hex ] 7C002. 2assert
+  [ decimal ]  0 63 pnt-a-2addr [ hex ] 7C07E. 2assert
+  [ decimal ]  1  0 pnt-a-2addr [ hex ] 7C080. 2assert
+  [ decimal ]  1 63 pnt-a-2addr [ hex ] 7C0FE. 2assert
+  [ decimal ] 63 63 pnt-a-2addr [ hex ] 7DFFE. 2assert ;
+
+----
+
+: test-pnt-b
+  [ decimal ]  0  0 pnt-b-2addr [ hex ] 7E000. 2assert
+  [ decimal ]  0  1 pnt-b-2addr [ hex ] 7E003. 2assert
+  [ decimal ]  0 63 pnt-b-2addr [ hex ] 7E07E. 2assert
+  [ decimal ]  1  0 pnt-b-2addr [ hex ] 7E080. 2assert
+  [ decimal ]  1 63 pnt-b-2addr [ hex ] 7E0FE. 2assert
+  [ decimal ] 63 63 pnt-b-2addr [ hex ] 7FFFE. 2assert ;
+
+----
+
+: test2
+  screen-p1
+  162 #V9R-CTL-RW V9REG! \ 162=A2h
+  0   #V9R-PALETTEPTR-W V9REG!
+  palturbor
+  512 
+  dup pat-draw1
+  dup 0 0 pnt-a  dup 0 1 pnt-a  dup 0 2 pnt-a  dup 0 3 pnt-a
+  dup 1 0 pnt-a  dup 2 1 pnt-a  dup 3 2 pnt-a  dup 4 3 pnt-a
+  dup 0 0 pnt-b  dup 0 1 pnt-b  dup 0 2 pnt-b  dup 0 3 pnt-b
+  dup 1 0 pnt-b  dup 2 1 pnt-b  dup 3 2 pnt-b  dup 4 3 pnt-b
+  drop
+  true display ;

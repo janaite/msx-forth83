@@ -13,6 +13,7 @@ decimal 2 5 thru      \ constans
 decimal 6 14 thru 
 decimal 15 18 thru \ Scrolls...
 decimal 19 21 thru \ screen mode...
+decimal 22 27 thru \ patterns...
 
 ----
 \ constants
@@ -129,11 +130,13 @@ end-code
 \ 2VRAM!! ( D-addr -- )
 
 \ Set VRAM write address
+hex
 : 2VRAM!! ( D-addr -- )
    D24BITS
-   #V9R-VRAM-W#0 V9REG!   \ LSB
-   #V9R-VRAM-W#1 V9REG!   \ MID
-   #V9R-VRAM-W#2 V9REG!   \ MSB
+   #V9R-VRAM-W#0 V9REG!   \ R#0 = LSB
+   #V9R-VRAM-W#1 V9REG!   \ R#1 = MID
+   7F and                 \ Autoincrement AII=0
+   #V9R-VRAM-W#2 V9REG!   \ R#2 = MSB
 ;
 ----
 \ VRAM!! ( addr -- )
@@ -294,15 +297,20 @@ hex
 ----
 \ SCREEN-P1
 
+decimal
+: SUPERIMPOSE ( f -- )    \ video9000 superimpose enable
+  if 24 else 0 then #V9RESERVED PC! ;
+
 : SCREEN-P1 ( -- )
+  true superimpose
+  \ 0  #V9SYSCTL PC!  \ MCS=0
   #CLRM-4bpp
   #XIMM-512PX or
   #DCKM=0 or
   #DSPM-P1 or
   #V9R-SCREEN-RW#0 V9REG+1!  \ R#6
   0 >V9REGDATA               \ R#7
-  0 #V9SYSCTL PC!            \ P#7
-  24 #V9RESERVED PC! ;       \ video9000 superimpose enable?!
+  0 #V9SYSCTL PC!  ;         \ P#7
 ----
 \ PAT-B-2ADDR, PAT-A-2ADDR ( pat row -- d-addr )
 decimal
@@ -320,4 +328,43 @@ decimal
 hex
 : PAT-B-2ADDR ( pat row -- d-addr )
    PAT-A-2ADDR 40000. D+ ;
+----
+\ PNT-A ( pat row col -- )
+
+hex
+\ Pattern name table
+: PNT-A-2ADDR ( row col -- d-addr )
+  2* swap 80 * + 
+  0 7C000. D+ ;
+
+: PNT-A ( pat row col -- )
+  pnt-a-2addr 2vram!! 
+  n2b ( msb lsb )  \ swap ???
+  >vram >vram ;
+----
+\ PNT-B ( pat row col -- )
+
+: PNT-B-2ADDR ( row col -- d-addr )
+  2* swap 80 * + 
+  0 7E000. D+ ;
+
+: PNT-B ( pat row col -- )
+  pnt-b-2addr 2vram!! 
+  n2b ( msb lsb )  \ swap ???
+  >vram >vram ;
+----
+\ FILL-PNT-A ( pat -- ), FILL-PNT-B ( pat -- )
+hex
+7C000. 2constant #PNT-A-BEGIN
+2000   constant  #PNT-A-LEN
+7E000. 2constant #PNT-B-BEGIN
+2000   constant  #PNT-B-LEN
+
+: FILL-PNT-A ( pat -- )
+  #PNT-A-BEGIN 2vram!!
+  #PNT-A-LEN 0 do dup n2b >vram >vram loop drop ;
+
+: FILL-PNT-B ( pat -- )
+  #PNT-B-BEGIN 2vram!!
+  #PNT-B-LEN 0 do dup n2b >vram >vram loop drop ;
 ----

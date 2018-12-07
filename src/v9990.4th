@@ -13,7 +13,7 @@ decimal 2 5 thru      \ constans
 decimal 6 14 thru 
 decimal 15 18 thru \ Scrolls...
 decimal 19 21 thru \ screen mode...
-decimal 22 27 thru \ patterns...
+decimal 22 30 thru 
 
 ----
 \ constants
@@ -368,3 +368,39 @@ hex
   #PNT-B-BEGIN 2vram!!
   #PNT-B-LEN 0 do dup n2b >vram >vram loop drop ;
 ----
+hex
+40 constant #V9STATUS-VR
+20 constant #V9STATUS-HR
+80 constant #V9STATUS-TR
+01 constant #V9STATUS-CE
+
+----
+\ WAITVSYNC ( -- )
+
+: WAITVSYNC ( -- )
+  begin
+    #V9STATUS PC@
+    #V9STATUS-VR and
+  0<> while repeat
+  begin
+    #V9STATUS PC@
+    #V9STATUS-VR and
+  0= while repeat ;
+
+----
+\ WAITCMD-DATAREADY ( -- )
+
+: WAITCMD-DATAREADY ( -- )
+  begin
+    #V9STATUS PC@
+    #V9STATUS-TR and
+  0= while repeat ;
+----
+\ WAITCMD ( -- ) 
+
+: WAITCMD ( -- ) 
+  begin
+    #V9STATUS PC@
+    #V9STATUS-CE and
+  0<> while repeat ;
+

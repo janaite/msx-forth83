@@ -242,10 +242,10 @@ decimal
 variable posx
 variable posy
 
-: GO-LEFT  posx @ 1- dup posx ! scroll-ax ;
-: GO-RIGHT posx @ 1+ dup posx ! scroll-ax ;
-: GO-UP    posy @ 1- dup posy ! scroll-ay ;
-: GO-DOWN  posy @ 1+ dup posy ! scroll-ay ;
+: GO-LEFT  posx @ 1- dup posx ! waitvsync scroll-ax ;
+: GO-RIGHT posx @ 1+ dup posx ! waitvsync scroll-ax ;
+: GO-UP    posy @ 1- dup posy ! waitvsync scroll-ay ;
+: GO-DOWN  posy @ 1+ dup posy ! waitvsync scroll-ay ;
 ----
 hex
 1D constant #CUR-LEFT

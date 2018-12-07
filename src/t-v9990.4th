@@ -4,7 +4,7 @@
 
 msx-v9990 also forth definitions
 
-decimal 2 14 thru
+decimal 2 22 thru
 
 ----
 
@@ -106,9 +106,9 @@ decimal
    bmp3 ;
 ----
 
-\ PAT-DRAW1 uses color01 and color02
+\ PAT-DRAWBK uses color01 and color02
 hex
-: PAT-DRAW1
+: PAT-DRAWBK
  dup 0 pat-a-2addr 2vram!! 11 >vram 12 >vram 21 >vram 11 >vram
  dup 1 pat-a-2addr 2vram!! 11 >vram 12 >vram 21 >vram 11 >vram
  dup 2 pat-a-2addr 2vram!! 11 >vram 22 >vram 22 >vram 11 >vram
@@ -153,10 +153,112 @@ decimal
   0   #V9R-PALETTEPTR-W V9REG!
   palturbor
   512 
-  dup pat-draw1
+  dup pat-drawbk
   dup 0 0 pnt-a  dup 0 1 pnt-a  dup 0 2 pnt-a  dup 0 3 pnt-a
   dup 1 0 pnt-a  dup 2 1 pnt-a  dup 3 2 pnt-a  dup 4 3 pnt-a
   dup 0 0 pnt-b  dup 0 1 pnt-b  dup 0 2 pnt-b  dup 0 3 pnt-b
   dup 1 0 pnt-b  dup 2 1 pnt-b  dup 3 2 pnt-b  dup 4 3 pnt-b
   drop
   true display ;
+----
+\ PAT-DRAW1 uses color02 and color03
+
+hex
+: PAT-DRAW1 ( pat -- )
+ dup 0 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 34 >vram
+ dup 1 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 34 >vram
+ dup 2 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 34 >vram
+ dup 3 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 34 >vram
+ dup 4 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 34 >vram
+ dup 5 pat-a-2addr 2vram!! 34 >vram 43 >vram 44 >vram 34 >vram
+ dup 6 pat-a-2addr 2vram!! 34 >vram 44 >vram 44 >vram 44 >vram
+     7 pat-a-2addr 2vram!! 34 >vram 44 >vram 44 >vram 44 >vram
+ ;
+----
+\ PAT-DRAW2 uses color02 and color03
+
+hex
+: PAT-DRAW2 ( pat -- )
+ dup 0 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 33 >vram
+ dup 1 pat-a-2addr 2vram!! 44 >vram 33 >vram 33 >vram 33 >vram
+ dup 2 pat-a-2addr 2vram!! 44 >vram 43 >vram 33 >vram 33 >vram
+ dup 3 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 33 >vram
+ dup 4 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 33 >vram
+ dup 5 pat-a-2addr 2vram!! 43 >vram 44 >vram 34 >vram 43 >vram
+ dup 6 pat-a-2addr 2vram!! 44 >vram 44 >vram 44 >vram 43 >vram
+     7 pat-a-2addr 2vram!! 44 >vram 44 >vram 44 >vram 43 >vram
+ ;
+----
+ \ PAT-DRAW3 uses color02 and color03
+
+hex
+: PAT-DRAW3 ( pat -- )
+ dup 0 pat-a-2addr 2vram!! 33 >vram 34 >vram 44 >vram 44 >vram
+ dup 1 pat-a-2addr 2vram!! 33 >vram 34 >vram 34 >vram 43 >vram
+ dup 2 pat-a-2addr 2vram!! 33 >vram 34 >vram 44 >vram 44 >vram
+ dup 3 pat-a-2addr 2vram!! 33 >vram 34 >vram 44 >vram 44 >vram
+ dup 4 pat-a-2addr 2vram!! 33 >vram 34 >vram 44 >vram 44 >vram
+ dup 5 pat-a-2addr 2vram!! 33 >vram 34 >vram 34 >vram 43 >vram
+ dup 6 pat-a-2addr 2vram!! 33 >vram 34 >vram 34 >vram 43 >vram
+     7 pat-a-2addr 2vram!! 33 >vram 33 >vram 33 >vram 34 >vram
+ ;
+----
+\ PAT-DRAW4 uses color02 and color03
+hex
+: PAT-DRAW4 ( pat -- )
+ dup 0 pat-a-2addr 2vram!! 44 >vram 44 >vram 43 >vram 33 >vram
+ dup 1 pat-a-2addr 2vram!! 34 >vram 43 >vram 43 >vram 33 >vram
+ dup 2 pat-a-2addr 2vram!! 44 >vram 44 >vram 43 >vram 33 >vram
+ dup 3 pat-a-2addr 2vram!! 44 >vram 44 >vram 43 >vram 33 >vram
+ dup 4 pat-a-2addr 2vram!! 44 >vram 44 >vram 43 >vram 33 >vram
+ dup 5 pat-a-2addr 2vram!! 34 >vram 43 >vram 43 >vram 33 >vram
+ dup 6 pat-a-2addr 2vram!! 34 >vram 43 >vram 43 >vram 33 >vram
+     7 pat-a-2addr 2vram!! 43 >vram 33 >vram 33 >vram 33 >vram
+;
+----
+
+decimal
+: PAT-CASTLE ( row col -- )
+  11 pat-draw1  12 pat-draw2  13 pat-draw3  14 pat-draw4
+  \ 11 0 0 pnt-a  12 0 1 pnt-a  13 1 0 pnt-a  14 1 1 pnt-a
+  2dup 11 -rot  pnt-a  
+  2dup 12 -rot 1+ pnt-a
+  2dup 13 -rot swap 1+ swap pnt-a
+       14 -rot swap 1+ swap 1+ pnt-a
+;
+
+----
+: test3
+  screen-p1
+  162 #V9R-CTL-RW V9REG! \ 162=A2h
+  0   #V9R-PALETTEPTR-W V9REG!
+  palturbor
+  512 pat-drawbk
+  512 fill-pnt-a
+  12 15 pat-castle
+  true display ;
+----
+
+variable posx
+variable posy
+
+: GO-LEFT  posx @ 1- dup posx ! scroll-ax ;
+: GO-RIGHT posx @ 1+ dup posx ! scroll-ax ;
+: GO-UP    posy @ 1- dup posy ! scroll-ay ;
+: GO-DOWN  posy @ 1+ dup posy ! scroll-ay ;
+----
+hex
+1D constant #CUR-LEFT
+1C constant #CUR-RIGHT
+1E constant #CUR-UP
+1F constant #CUR-DOWN
+1B constant #KEY-ESC
+
+: test4
+  begin  key
+    dup #CUR-LEFT  = if go-left  then
+    dup #CUR-RIGHT = if go-right then
+    dup #CUR-UP    = if go-up    then
+    dup #CUR-DOWN  = if go-down  then
+    #KEY-ESC <> while repeat ;
+----

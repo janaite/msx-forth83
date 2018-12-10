@@ -335,4 +335,18 @@ hex
     until drop
   then ;
 ----
+\ SCREEN0, SCREEN0/80, SCREEN0/40
 
+hex F3AE constant #LINL40
+
+: SCREEN0 ( -- )
+  0 CHGMOD ;
+
+decimal
+: SCREEN0/80 ( -- )
+  80 #LINL40 C!  screen0 ;
+
+decimal
+: SCREEN0/40 ( -- )
+  40 #LINL40 C!  screen0 ;
+----

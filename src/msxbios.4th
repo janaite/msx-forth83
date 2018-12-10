@@ -10,7 +10,7 @@ decimal 3 load ( msxbios )
 decimal 4 6 THRU ( def bios )
 
 MSX definitions
-decimal 7 28 thru ( impl bios )
+decimal 7 capacity 1- thru ( impl bios )
 
 decimal
 ----
@@ -61,6 +61,7 @@ hex
 hex
 0132 msxbios (CHGCAP)
 009F msxbios (CHGET)
+00C6 msxbios (POSIT)
 ----
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
@@ -349,4 +350,26 @@ decimal
 decimal
 : SCREEN0/40 ( -- )
   40 #LINL40 C!  screen0 ;
+----
+\ POSIT ( row col -- )
+
+code POSIT ( row col -- )
+  D POP
+  H POP
+  E H MOV
+  (POSIT) \ H=x-coord L=y-coord
+  next
+end-code
+----
+\ CURSOR ( f -- ), #CSRY, #CSRX
+
+hex
+F3DC constant #CSRY  \ 1 byte, Y-coordinate of cursor
+F3DD constant #CSRX  \ 1 byte, X-coordinate of cursor
+
+hex
+: cursor ( f -- ) \ show/hide cursor
+  1B emit 79 emit 34 emit
+  1B emit IF 79 ELSE 78 THEN emit
+  35 emit ;
 ----

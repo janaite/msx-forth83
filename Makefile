@@ -8,6 +8,7 @@
 FILES  = msxbios.blk t-sc2.blk t-delay.blk 
 FILES += v9990.blk t-v9990.blk 
 FILES += msxdos.blk t-msxdos.blk
+FILES += jed.blk
 
 DIST_DIR=dist
 CC=gcc
@@ -33,4 +34,8 @@ RRM = rm -f -r
 .PHONY: clean
 clean:
 	$(RRM) bin/*
-	$(RRM) dist/*
+	$(RRM) dist/*.blk
+
+.PHONY: test
+test:
+	openmsx -script openmsx.tcl -machine Sony_HB-F1XV -ext video9000 -ext ASCII_MSX-DOS2 -diska ./dist/

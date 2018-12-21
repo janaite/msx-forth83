@@ -62,6 +62,7 @@ hex
 0132 msxbios (CHGCAP)
 009F msxbios (CHGET)
 00C6 msxbios (POSIT)
+00A2 msxbios (CHPUT)
 ----
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
@@ -372,4 +373,13 @@ hex
   1B emit 79 emit 34 emit
   1B emit IF 79 ELSE 78 THEN emit
   35 emit ;
+----
+\ CHPUT ( ch -- )
+
+code CHPUT ( ch -- )
+  H POP
+  L A MOV
+  (CHPUT)
+  next
+end-code
 ----

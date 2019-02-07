@@ -113,6 +113,9 @@ hex
 0B constant #key-home
 0D constant #key-return
 08 constant #key-bs
+12 constant #key-ins
+7F constant #key-del
+18 constant #key-select
 ----
 
 hex 
@@ -233,8 +236,6 @@ variable what-state
 variable editor-quit
 variable current-block
 
-false editor-quit !
-
 ----
 
 : act-quit ( -- )
@@ -278,6 +279,29 @@ false editor-quit !
 
 : do-quit ( -- ) ;
 ----
+
+: current-block-next! ( S -- S )
+  current-block @
+  dup capacity 1- < if
+    1+ current-block ! then ;
+  
+: current-block-prev! ( S -- S )
+  current-block @
+  dup 0> if 
+    1- current-block ! then ;
+
+----
+
+: act-blk-prev ( c -- c )
+  .status" BLK previous"
+  current-block-prev!
+  current-block @ block draw-blk draw-cursor ;
+
+: act-blk-next ( c -- c )
+  .status" BLK next"
+  current-block-next!
+  current-block @ block draw-blk draw-cursor ;
+----
 : do-edit ( -- )
   key
   dup #key-esc    = if act-menu      else
@@ -287,8 +311,10 @@ false editor-quit !
   dup #key-right  = if act-cur-right else
   dup #key-home   = if act-cur-begin else
   dup #key-return = if act-cur-next  else
+  dup #key-ins    = if act-blk-prev  else
+  dup #key-del    = if act-blk-next  else
   act-edit-default
-  then then then then then then then
+  then then then then then then then then then
   drop ;
 ----
 

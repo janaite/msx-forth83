@@ -45,12 +45,28 @@ decimal
 
 ----
 decimal
-: SHOW1K ( buffer row col  -- )
+: SHOW1Kfast ( buffer row col  -- )
   vaddr
   16 0 do 
     2dup 64 >vram
     swap 64 + swap 80 +
   loop 2drop ;
+----
+
+decimal
+: show1k ( buffer row col -- )
+  \ show1kfast ;
+  false cursor
+  drop drop
+  16 0 do
+    I 5 + 4 posit
+    64 0 do
+      dup c@ chput
+      1+
+    loop
+  loop
+  drop true cursor
+  ;
 ----
 decimal
 : fastruler ( row col -- )

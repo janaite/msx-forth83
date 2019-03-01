@@ -63,6 +63,7 @@ hex
 009F msxbios (CHGET)
 00C6 msxbios (POSIT)
 00A2 msxbios (CHPUT)
+000C msxbios (RDSLT)
 ----
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
@@ -383,3 +384,14 @@ code CHPUT ( ch -- )
   next
 end-code
 ----
+\ RDSLT ( slot addr -- b )
+
+code RDSLT
+   H POP   D POP   E A MOV
+   B PUSH
+   (RDSLT)
+   EI
+   B POP
+   0 H MVI   A L MOV   H PUSH
+   next
+end-code

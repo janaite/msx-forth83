@@ -64,6 +64,7 @@ hex
 00C6 msxbios (POSIT)
 00A2 msxbios (CHPUT)
 000C msxbios (RDSLT)
+0014 msxbios (WRSLT)
 ----
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
@@ -385,13 +386,38 @@ code CHPUT ( ch -- )
 end-code
 ----
 \ RDSLT ( slot addr -- b )
+hex
 
 code RDSLT
    H POP   D POP   E A MOV
    B PUSH
-   (RDSLT)
+   000C CALL \ OR... (RDSLT)
    EI
    B POP
    0 H MVI   A L MOV   H PUSH
    next
 end-code
+----
+\ WRSLT ( slot addr b -- )
+hex
+
+code WRSLT
+   B H MOV   C L MOV   ( IP>HL )
+   D POP     B POP     XTHL
+   ( stack=IP,DE=b, BC=addr, HL=slot )
+   L A MOV
+   B H MOV C L MOV
+   ( A=slot,HL=addr,E=value)
+   0014 CALL  \ OR... (WRSLT)
+   B POP
+   next
+end-code
+----
+\ SLOTID ( primary expanded -- slotid)
+
+hex
+: SLOTID
+   3 and 2* 2*
+   swap 3 and +
+   80 + ;
+----

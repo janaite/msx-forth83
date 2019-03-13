@@ -22,7 +22,8 @@ hex
    does> @
    DD c, 21 c, ,       \ LD IX,fn
    FD c, 2A c, FCC0 ,  \ LD IY,[FCC0]
-   CD c, 1C ,          \ CALL CASLT
+   CD c, 1C ,          \ CALL CALSLT
+   FB                  \ EI
 ;
 ----
 

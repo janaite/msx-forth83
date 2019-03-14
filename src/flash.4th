@@ -41,13 +41,7 @@ hex
    01 flash@     \ device id
    flashAutoExit ;
 ----
-hex
-
-: flashWR! ( b addr -- )
-   A0 flashCmd!
-   flash!
-;
-----
+\ flashErase ( -- )
 
 hex
 : flashErase ( -- )
@@ -57,6 +51,46 @@ hex
    30 0000 flash! \ always 0
 ;
 
+----
+\ timeout?(v -- f), dq7equal (u u -- f)
+
+hex
+: timeout? ( value -- f)
+   \ verify bit5
+   20 and 0<> ;
+
+: dq7equal ( v1 v2 -- f)
+   80 and swap
+   80 and = ;
+----
+\ waitWrite ( value addr -- f)
+\ TODO: correct!!!
+hex
+\ wait for write process
+\ return: T if ok, F if timeout
+: waitWrite ( value addr -- f )
+   \ wait for DQ7 equal bit7 value
+   \ or timeout DQ5=0
+   begin
+      2dup flash@ ( old newvalue -- )
+      dup timeout? ( old new f -- )
+      -rot ( f old new -- )
+      dq7equal ( f f -- )
+   or until
+   flash@ timeout? not ;
+----
+\ flashWR! ( b addr -- f)
+
+hex
+
+: (flashWR!) ( b addr -- )
+   A0 flashCmd!
+   flash! ;
+
+: flashWR! ( b addr -- f)
+   2dup 
+   (flashWR!)
+   waitWrite ;
 ----
 decimal
 2 0 slotid FLASH-SLOTID !

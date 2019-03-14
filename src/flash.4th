@@ -11,7 +11,8 @@ hex
 
 variable FLASH-SLOTID
 
-: flash! ( addr b -- )
+: flash! ( b addr -- )
+   swap
    FLASH-SLOTID @ -rot
    ( slot addr b -- ) wrslt ;
 
@@ -20,18 +21,46 @@ variable FLASH-SLOTID
    ( slot addr -- b ) rdslt ;
 ----
 
-: flashCmd2! ( b -- )
-   55 AAA flash!
-   55 2AA flash!
-   555 flash! ;
+hex
+: flashCmd! ( b -- )
+   AA 0555 flash!
+   55 02AA flash!
+   ( b ) 0555 flash! ;
 
-: flashId ( -- manufactureid deviceid )
-   90 flashCmd2! \ manufacturer id
-   00 flash@
-   90 flashCmd2! \ device id
-   01 flash@ ;
+: flashAuto ( -- )
+   90 flashCmd! ;
+
+: flashAutoExit ( -- )
+   F0 0000 flash! ;
 ----
 
-2 0 slotid FLASH-SLOTID !
+hex
+: flashId ( -- manufactureid deviceid )
+   flashAuto
+   00 flash@     \ manufacturer id
+   01 flash@     \ device id
+   flashAutoExit ;
+----
+hex
+
+: flashWR! ( b addr -- )
+   A0 flashCmd!
+   flash!
+;
+----
+
+hex
+: flashErase ( -- )
+   80 flashCmd!
+   AA 0555 flash!
+   55 02AA flash!
+   30 0000 flash! \ always 0
+;
+
+----
 decimal
+2 0 slotid FLASH-SLOTID !
+
+hex
+flashId ( -- 01 A4 ) .s
 ----

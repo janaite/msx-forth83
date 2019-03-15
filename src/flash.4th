@@ -64,7 +64,6 @@ hex
    80 and = ;
 ----
 \ waitWrite ( value addr -- f)
-\ TODO: correct!!!
 hex
 \ wait for write process
 \ return: T if ok, F if timeout
@@ -72,11 +71,13 @@ hex
    \ wait for DQ7 equal bit7 value
    \ or timeout DQ5=0
    begin
-      2dup flash@ ( old newvalue -- )
-      dup timeout? ( old new f -- )
-      -rot ( f old new -- )
-      dq7equal ( f f -- )
+      ( v a --)
+      2dup flash@ ( v a old new -- )
+      dup timeout? ( v a old new f -- )
+      -rot ( v a f old new -- )
+      dq7equal ( v a f f -- )
    or until
+   ( v a ) swap drop
    flash@ timeout? not ;
 ----
 \ flashWR! ( b addr -- f)

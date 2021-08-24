@@ -66,6 +66,8 @@ hex
 00A2 msxbios (CHPUT)
 000C msxbios (RDSLT)
 0014 msxbios (WRSLT)
+0090 msxbios (GICINI)
+0093 msxbios (WRTPSG)
 ----
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
@@ -421,4 +423,26 @@ hex
    3 and 2* 2*
    swap 3 and +
    80 + ;
+----
+\ PSG init
+
+code GICINI ( -- )
+ÿÿ B PUSH
+ÿÿ (GICINI)
+ÿÿ B POP
+ÿÿ next
+end-code
+
+: PSGINI GICINI ;
+
+----
+\ PSG!
+
+code PSG! ( b reg -- )
+ÿÿ H POP
+ÿÿ D POPÿÿ L A MOV
+ÿÿ (WRTPSG)
+ÿÿ next
+end-code
+
 ----

@@ -21,13 +21,6 @@ jobs:
       - run: mv /root/forth.dsk /root/msx-forth83-${VERSION}.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
       - run: echo ${CIRCLE_PROJECT_USERNAME}, ${CIRCLE_PROJECT_REPONAME}, ${CIRCLE_SHA1}, ${VERSION}
-      - github-cli/release:
-          draft: false 
-          prerelease: true 
-          tag: latest 
-          title: Latest build 
-          token: GITHUB_TOKEN 
-          files: /root/msx-for83-latest.dsk
       - github-release/create:
           tag: ${VERSION}
           title: Version ${VERSION}

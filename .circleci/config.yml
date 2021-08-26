@@ -1,6 +1,6 @@
 version: 2.1
 parameters:
-  VERSION:
+  version:
     type: string
     default: "latest"
 orbs:

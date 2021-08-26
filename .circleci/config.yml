@@ -19,6 +19,7 @@ jobs:
       - run: mv /root/forth.dsk /root/msx-forth83-${VERSION}.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
       - run: echo ${CIRCLE_PROJECT_USERNAME}, ${CIRCLE_PROJECT_REPONAME}, ${CIRCLE_SHA1}, ${VERSION}
+      - run: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /root/msx-forth83-${VERSION}.dsk
       - github-release/create:
           tag: ${VERSION}
           title: Version ${VERSION}

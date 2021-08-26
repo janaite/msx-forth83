@@ -2,7 +2,7 @@ version: 2.1
 parameters:
   version:
     type: string
-    default: "latest"
+    default: "v0.0.4"
 orbs:
   github-release: h-matsuo/github-release@0.1.3
   github-cli: circleci/github-cli@1.0.4

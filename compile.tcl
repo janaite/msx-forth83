@@ -64,7 +64,7 @@ proc call_forth83 {} {
 }
 
 proc open_blk_file {} {
-  foreach path [forth83/dist/msxbios.blk forth83/dist/vt52.blk] {
+  foreach path [list "forth83/dist/msxbios.blk" "forth83/dist/vt52.blk"] {
     set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
     type "OPEN $filename\r"
     wait_response "OPEN $filename  ok" {compile}

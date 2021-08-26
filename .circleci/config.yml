@@ -18,7 +18,7 @@ jobs:
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
       - run: mv /root/forth.dsk /root/msx-forth83-${VERSION}.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
-      - run: echo ${CIRCLE_PROJECT_NAME}, ${CIRCLE_PROJECT_REPONAME}, ${CIRCLE_SHA1}, ${VERSION}
+      - run: echo ${CIRCLE_PROJECT_USERNAME}, ${CIRCLE_PROJECT_REPONAME}, ${CIRCLE_SHA1}, ${VERSION}
       - github-release/create:
           tag: ${VERSION}
           title: Version ${VERSION}

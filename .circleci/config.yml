@@ -16,12 +16,10 @@ jobs:
       - checkout
       - run: make
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
-      - run: mv /root/forth.dsk /root/msx-forth83-v${VERSION}-alpha.dsk
+      - run: mv /root/forth.dsk /root/msx-forth83-${VERSION}.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
-      - github-release/delete:
-          tag: v${VERSION}      
       - github-release/create:
-          tag: v${VERSION}
-          title: Version v${VERSION}
-          description: This release is version v${VERSION}.
+          tag: ${VERSION}
+          title: Version ${VERSION}
+          description: This release is version ${VERSION}.
           file-path: /root/msx-forth83-${VERSION}.dsk

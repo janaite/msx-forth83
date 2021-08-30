@@ -1,17 +1,17 @@
 ----
 
-
-only definitions FORTH also
+only definitions FORTH
 vocabulary MSX
 
-FORTH definitions
+also HIDDEN definitions
 
 decimal 3 load ( msxbios )
 decimal 4 6 THRU ( def bios )
 
-MSX definitions
+also MSX definitions
 decimal 7 capacity 1- thru ( impl bios )
 
+only MSX also FORTH definitions
 decimal
 ----
 ----
@@ -427,10 +427,10 @@ hex
 \ PSG init
 
 code GICINI ( -- )
-ÿÿ B PUSH
-ÿÿ (GICINI)
-ÿÿ B POP
-ÿÿ next
+   B PUSH
+   (GICINI)
+   B POP
+   next
 end-code
 
 : PSGINI GICINI ;
@@ -439,10 +439,9 @@ end-code
 \ PSG!
 
 code PSG! ( b reg -- )
-ÿÿ H POP
-ÿÿ D POPÿÿ L A MOV
-ÿÿ (WRTPSG)
-ÿÿ next
+   H POP
+   D POP   L A MOV
+   (WRTPSG)
+   next
 end-code
-
 ----

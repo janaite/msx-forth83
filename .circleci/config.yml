@@ -20,24 +20,32 @@ jobs:
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
       - run: mv /root/forth.dsk /root/msx-forth83-latest.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
+     
   
-  deploy-job:
-    docker: 
-      - image: cimg/base:2021.04
-    steps:
-      - gh/release:
-          draft: false 
-          files: /root/msx-forth83-latest.dsk 
-          prerelease: true 
-          tag: latest 
-          title: Latest release 
-          version: latest 
-          token: GITHUB_TOKEN
+  # deploy-job:
+  #   docker: 
+  #     - image: cimg/base:2021.04
+  #   steps:
+  #     - gh/release:
+  #         draft: false 
+  #         files: /root/msx-forth83-latest.dsk 
+  #         prerelease: true 
+  #         tag: latest 
+  #         title: Latest release 
+  #         version: latest 
+  #         token: GITHUB_TOKEN
 
 workflows:
   build-deploy-workflow:
     jobs:
       - build-job
-      - deploy-job:
-          requires:
+      - gh/release:
+          draft: false 
+          files: /root/msx-forth83-latest.dsk 
+          prerelease: true 
+          tag: latest 
+          title: Latest release
+          version: latest 
+          token: GITHUB_TOKEN
+          requires: 
             - build-job

@@ -4,7 +4,7 @@ parameters:
     type: string
     default: "latest"
 orbs:
-  github-cli: circleci/github-cli@1.0.4
+  github-cli: circleci/github-cli@1.0
   docker: circleci/docker@1.7.0
 
 jobs:

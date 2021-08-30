@@ -5,6 +5,8 @@ parameters:
     default: "latest"
 orbs:
   github-release: h-matsuo/github-release@0.1.3
+  github-cli: circleci/github-cli@1.0.4
+
 jobs:
   build:
     docker:
@@ -18,12 +20,7 @@ jobs:
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
       - run: mv /root/forth.dsk /root/msx-forth83-${VERSION}.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
-      - run: echo ${CIRCLE_PROJECT_USERNAME}, ${CIRCLE_PROJECT_REPONAME}, ${CIRCLE_SHA1}, ${VERSION}
-      - run:
-          name: "Publish Release on GitHub"
-          command: |
-            go get github.com/tcnksm/ghr
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /root/msx-forth83-${VERSION}.dsk
+      - run: echo ${GITHUB_TOKEN}, ${CIRCLE_PROJECT_USERNAME}, ${CIRCLE_PROJECT_REPONAME}, ${CIRCLE_SHA1}, ${VERSION}
       - github-release/create:
           tag: ${VERSION}
           title: Version ${VERSION}

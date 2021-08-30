@@ -4,7 +4,7 @@ parameters:
     type: string
     default: "latest"
 orbs:
-  gh: circleci/github-cli@1.0.4
+  github-cli: circleci/github-cli@1.0.4
   docker: circleci/docker@1.7.0
 
 jobs:
@@ -39,7 +39,7 @@ workflows:
   build-deploy-workflow:
     jobs:
       - build-job
-      - gh/release:
+      - github-cli/release:
           draft: false 
           files: /root/msx-forth83-latest.dsk 
           prerelease: true 

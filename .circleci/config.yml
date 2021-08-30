@@ -4,7 +4,7 @@ parameters:
     type: string
     default: "latest"
 orbs:
-  github-cli: circleci/github-cli@1.0
+  gh: circleci/github-cli@1.0.4
   docker: circleci/docker@1.7.0
 
 jobs:
@@ -20,12 +20,12 @@ jobs:
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
       - run: mv /root/forth.dsk /root/msx-forth83-latest.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
-
-workflows:
-  build-deploy-workflow:
-    jobs:
-      - build-job
-      - github-cli/release:
+  
+  deploy-job:
+    docker: 
+      - image: cimg/base:2021.04
+    steps:
+      - gh/release:
           draft: false 
           files: /root/msx-forth83-latest.dsk 
           prerelease: true 
@@ -33,3 +33,11 @@ workflows:
           title: Latest release 
           version: latest 
           token: GITHUB_TOKEN
+
+workflows:
+  build-deploy-workflow:
+    jobs:
+      - build-job
+      - deploy-job:
+          requires:
+            - build-job

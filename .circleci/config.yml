@@ -35,7 +35,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp
-      # - run: sudo apt-get update
+      - run: sudo apt-get update
       - github-cli/setup:
           version: 0.0.0-test
       - run: gh release create latest --prerelease /tmp/msx-forth83-latest.dsk

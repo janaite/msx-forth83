@@ -31,7 +31,7 @@ jobs:
           root: /tmp
           paths:
             - msx-forth83-latest.dsk
-            - /blk/*
+            - blk/*
   
   deploy-job:
     docker: 

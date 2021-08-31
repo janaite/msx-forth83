@@ -42,8 +42,8 @@ jobs:
       - github-cli/clone
       - run: gh release delete latest -y
       - run: gh release create latest /tmp/msx-forth83-latest.dsk
-      - run: tar czf msx-forth83-source.tar.gz ./src/* ./.vscode/* 
-      - run: gh release upload latest msx-forth83-source.tar.gz
+      - run: tar czf msx-forth83-blk.tar.gz ./dist/*.blk 
+      - run: gh release upload latest msx-forth83-blk.tar.gz
       #  - github-cli/release:
       #      draft: false 
       #      files: /root/msx-forth83-latest.dsk 

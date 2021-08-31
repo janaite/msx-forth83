@@ -40,7 +40,8 @@ jobs:
           version: 2.0.0
       - github-cli/clone
       - run: gh release delete latest -y
-      - run: gh release create latest --prerelease /tmp/msx-forth83-latest.dsk
+      - run: gh release create latest /tmp/msx-forth83-latest.dsk
+      - run: gh release upload latest ./* ./src/* ./.vscode/*
       #  - github-cli/release:
       #      draft: false 
       #      files: /root/msx-forth83-latest.dsk 

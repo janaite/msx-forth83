@@ -21,6 +21,8 @@ jobs:
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
       - run: mv /root/forth.dsk /root/msx-forth83-latest.dsk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
+      - store_artifacts:
+          path: /root/msx-forth83-latest.dsk
 
   # deploy-job:
   #   docker: 
@@ -41,7 +43,11 @@ workflows:
     jobs:
       - build-job
       - github-cli/release:
-          tag: tag
+          draft: false
+          files: msx-forth83-latest.dsk
+          prerelease: true
+          tag: latest
+          title: Latest build
           requires: 
             - build-job
 

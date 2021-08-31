@@ -37,7 +37,7 @@ jobs:
           at: /tmp
       - run: sudo apt-get update
       - github-cli/setup:
-          version: 0.0.0-test
+          version: 2.0.0
       - run: gh release create latest --prerelease /tmp/msx-forth83-latest.dsk
       #  - github-cli/release:
       #      draft: false 

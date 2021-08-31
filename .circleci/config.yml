@@ -21,13 +21,17 @@ jobs:
       - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
       - run: mv /root/forth.dsk /root/msx-forth83-latest.dsk
       - run: cp /root/msx-forth83-latest.dsk /tmp/msx-forth83-latest.dsk
+      - run: cp /root/forth83/dist/*.blk /tmp/blk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
       - store_artifacts:
           path: /root/msx-forth83-latest.dsk
+      - store_artifacts:
+          path: /tmp/blk/*.blk
       - persist_to_workspace:
           root: /tmp
           paths:
             - msx-forth83-latest.dsk
+            - /blk/*
   
   deploy-job:
     docker: 
@@ -42,7 +46,7 @@ jobs:
       - github-cli/clone
       - run: gh release delete latest -y
       - run: gh release create latest /tmp/msx-forth83-latest.dsk
-      - run: tar czf msx-forth83-blk.tar.gz ./dist/*.blk 
+      - run: tar czf msx-forth83-blk.tar.gz /tmp/blk/*
       - run: gh release upload latest msx-forth83-blk.tar.gz
       #  - github-cli/release:
       #      draft: false 

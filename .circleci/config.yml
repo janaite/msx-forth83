@@ -48,7 +48,7 @@ workflows:
       - build-job
       - github-cli/release:
           draft: false
-          files: /tmp/msx-forth83-latest.dsk
+          files: /tmp/msx-forth83-latest.dsk 
           prerelease: true
           tag: latest
           title: Latest build

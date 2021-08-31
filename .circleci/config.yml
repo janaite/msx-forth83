@@ -28,19 +28,25 @@ jobs:
           root: /tmp
           paths:
             - msx-forth83-latest.dsk
-  # deploy-job:
-  #   docker: 
-  #     - image: cimg/base:2021.04
-  #   steps:
-  #     - run: sudo apt-get update
-  #     - github-cli/release:
-  #         draft: false 
-  #         files: /root/msx-forth83-latest.dsk 
-  #         prerelease: true 
-  #         tag: latest 
-  #         title: Latest release 
-  #         version: latest 
-  #         token: GITHUB_TOKEN
+  deploy-job:
+    docker: 
+     - image: cimg/base:stable
+
+    steps:
+      - attach_workspace:
+          at: /tmp
+      # - run: sudo apt-get update
+      - github-cli/setup:
+          version: 0.0.0-test
+      - run: gh release create latest --prerelease msx-forth83-latest.dsk
+      #  - github-cli/release:
+      #      draft: false 
+      #      files: /root/msx-forth83-latest.dsk 
+      #      prerelease: true 
+      #      tag: latest 
+      #      title: Latest release 
+      #      version: latest 
+      #      token: GITHUB_TOKEN
 
 workflows:
   build-deploy-workflow:

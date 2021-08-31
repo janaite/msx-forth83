@@ -38,7 +38,7 @@ jobs:
       # - run: sudo apt-get update
       - github-cli/setup:
           version: 0.0.0-test
-      - run: gh release create latest --prerelease msx-forth83-latest.dsk
+      - run: gh release create latest --prerelease /tmp/msx-forth83-latest.dsk
       #  - github-cli/release:
       #      draft: false 
       #      files: /root/msx-forth83-latest.dsk 
@@ -52,15 +52,14 @@ workflows:
   build-deploy-workflow:
     jobs:
       - build-job
-      - github-cli/release:
-          draft: false
-          files: msx-forth83-latest.dsk 
-          prerelease: true
-          tag: latest
-          title: Latest build
-          requires: 
-            - build-job
-
-      # - deploy-job:
+      # - github-cli/release:
+      #     draft: false
+      #     files: msx-forth83-latest.dsk 
+      #     prerelease: true
+      #     tag: latest
+      #     title: Latest build
       #     requires: 
       #       - build-job
+      - deploy-job:
+          requires: 
+            - build-job

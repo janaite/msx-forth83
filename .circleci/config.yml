@@ -39,6 +39,7 @@ jobs:
       - github-cli/setup:
           version: 2.0.0
       - github-cli/clone
+      - run: gh release delete latest -y
       - run: gh release create latest --prerelease /tmp/msx-forth83-latest.dsk
       #  - github-cli/release:
       #      draft: false 

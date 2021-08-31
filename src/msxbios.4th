@@ -1,17 +1,15 @@
 ----
 
-only definitions FORTH
-vocabulary MSX
+only FORTH also definitions
 
-also HIDDEN definitions
+vocabulary MSX
+MSX also definitions
 
 decimal 3 load ( msxbios )
 decimal 4 6 THRU ( def bios )
 
-also MSX definitions
 decimal 7 capacity 1- thru ( impl bios )
 
-only MSX also FORTH definitions
 decimal
 ----
 ----
@@ -222,7 +220,7 @@ end-code
 \ INIMLT ( S -- )
 hex
 F3D1 constant #MLTNAM   \ SCREEN 3 name table
-F3D3 constant #MLTCOL   \ SCREEN 3 color table 
+F3D3 constant #MLTCOL   \ SCREEN 3 color table
 F3D5 constant #MLTCGP   \ SCREEN 3 character pattern table
 F3D7 constant #MLTATR   \ SCREEN 3 sprite attribute table
 F3D9 constant #MLTPAT   \ SCREEN 3 sprite pattern table
@@ -311,7 +309,7 @@ end-code
 ----
 \ BIOS60HZ ( -- ), BIOS50HZ ( -- )
 
-hex 
+hex
 : BIOS60HZ ( -- )
    2B bios-c@ 80 and 0= ;
 
@@ -334,10 +332,10 @@ hex
   0            \ convert to double precision number
   #JIFFY @ 0 d+
   dup 0= if    \ sum not overflows
-    drop (delayjf) 
-  else 
+    drop (delayjf)
+  else
     ffff. d- drop
-    begin 
+    begin
       dup #JIFFY @ <=  \ signed compare !
     until drop
   then ;

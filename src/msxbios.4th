@@ -2,8 +2,8 @@
 
 only FORTH also definitions
 
-vocabulary MSX
-MSX also definitions
+\ vocabulary MSX
+\ MSX also definitions
 
 decimal 3 load ( msxbios )
 decimal 4 6 THRU ( def bios )
@@ -66,6 +66,8 @@ hex
 0014 msxbios (WRSLT)
 0090 msxbios (GICINI)
 0093 msxbios (WRTPSG)
+0111 msxbios (MAPXYC)
+0120 msxbios (SETC)
 ----
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
@@ -442,4 +444,42 @@ code PSG! ( b reg -- )
    (WRTPSG)
    next
 end-code
+----
+
+code SETC ( -- )
+   B PUSH
+   (SETC)
+   B POP
+   next
+end-code
+
+hex
+: ATRBYT! ( c --) F3F2 ! ;
+: ATRBYT@ ( -- c) F3F2 @ ;
+: GXPOS! ( u --) FCB3 ! ;
+: GXPOS@ ( -- u) FCB3 @ ;
+: GYPOS! ( u --) FCB5 ! ;
+: GYPOS@ ( -- u) FCB5 @ ;
+----
+
+code MAPXYC ( x y --)
+   D POP
+   H POP
+   B PUSH
+   H B MOV
+   L C MOV
+   (MAPXYC)
+   B POP
+   next
+end-code
+----
+
+\ Ported from: Micro Sistemas n88 pages 42-43
+: PLOT ( x y c -- )
+   ATRBYT@ >R
+   ATRBYT!
+   MAPXYC
+   SETC
+   R> ATRBYT!
+;
 ----

@@ -1,12 +1,15 @@
+set blk_files [list "forth83/dist/msxbios.blk" "forth83/dist/vt52.blk"]
+
 #
 # Wait for boot message "BOOT COMPLETED"
 # 
 
-proc wait_boot {{command ""}} {
+proc wait_boot {{cmd ""}} {
   if {[string first "BOOT COMPLETED" [get_screen]] >= 0} {
-    $command
-  } else {
-    after time 5 "wait_boot {$command}"
+    message "*match*"
+    $cmd
+  } elseif {$cmd != ""} {
+    after time 5 [list wait_boot $cmd]
   }
 }
 
@@ -25,6 +28,7 @@ proc get_current_line {} {
 
 proc get_last_line {} {
   set nl2 [string last "\n" [get_screen]]
+  if {$nl2 < 0} {return ""}
   set tmp [string range [get_screen] 0 [expr $nl2 - 1]]
   set nl1 [string last "\n" $tmp]
   if {$nl1 < 0} {return ""}
@@ -35,11 +39,13 @@ proc get_last_line {} {
 # Wait for response on last line
 #
 
-proc wait_response {message command} {
-  if {[string last $message [get_last_line]] >= 0} {
-    $command
-  } else {
-    after time 5 "wait_response {$message} {$command}" 
+proc wait_response {msg cmd} {
+  if {[string last $msg [get_last_line]] >= 0} {
+    message "*match*"
+    $cmd
+  } elseif {[llength $cmd] > 0} {
+    #message "*after time 5 wait_response \"$msg\" $cmd"
+    after time 5 [list wait_response "$msg" $cmd]
   }
 }
 
@@ -50,23 +56,38 @@ proc wait_response {message command} {
 proc call_forth83 {} {
   message "Calling Forth83..."
   type "F83\r"
-  wait_response "Version 2.1.0 Modified 01Jun84" {open_blk_file}
+  wait_response "Version 2.1.0 Modified 01Jun84" open_blk_file
 }
 
 proc open_blk_file {} {
-  message "Opening BLK files..."
-  foreach path [list "forth83/dist/vt52.blk" "forth83/dist/msxbios.blk"] {
-    set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
-    message "Opening $filename..."
-    type "OPEN $filename\r"
-    wait_response "OPEN $filename  ok" {compile}
-  }
+  global blk_files
+  set path [lindex $blk_files 0]
+  set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
+
+  message "Opening $filename..."
+  type "OPEN $filename\r"
+  wait_response "OPEN $filename  ok" compile
 }
 
 proc compile {} {
-  message "Compiling BLK file..."
+  global blk_files
+  set path [lindex $blk_files 0]
+  set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
+  message "Compiling $filename..."
   type "OK\r"
-  wait_response "OK  ok" {save_system}
+  wait_response "OK  ok" summarize
+}
+
+proc summarize {} {
+  global blk_files
+  set blk_files [lrange $blk_files 1 end]
+  message "Done!"
+
+  if {[llength $blk_files] > 0} {
+    open_blk_file
+  } else {
+    save_system
+  }
 }
 
 proc save_system {} {
@@ -83,7 +104,7 @@ proc bye {} {
 
 proc replace_autoexec {} {
   message "Replacing AUTOEXEC.BAT..."
-  type "copy AUTOEXEC.BA2 AUTOEXEC.BAT\r"
+  type "COPY AUTOEXEC.BA2 AUTOEXEC.BAT\r"
   wait_response "1 file copied" {done}
 }
 
@@ -92,7 +113,7 @@ proc done {} {
   quit
 }
 
-#set renderer none
+set renderer none
 diskmanipulator create forth.dsk 720k -dos1
 virtual_drive forth.dsk
 diskmanipulator format virtual_drive -dos1
@@ -106,4 +127,5 @@ set save_settings_on_exit off
 set speed 9999
 set fullspeedwhenloading on
 
-wait_boot {call_forth83}
+message "Detecting boot..."
+wait_boot call_forth83

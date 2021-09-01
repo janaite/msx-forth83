@@ -10,7 +10,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: pvmm/msx-forth83:golang
+      - image: pvmm/msx-forth83:2.0
     environment:
       VERSION: << pipeline.parameters.version >>
     working_directory: /root/forth83

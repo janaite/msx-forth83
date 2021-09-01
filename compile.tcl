@@ -44,49 +44,45 @@ proc wait_response {message command} {
 }
 
 #
-# Find string on whole screen
-#
-proc find_on_screen {message {command ""}} {
-  if {[string last $message [get_screen]] >= 0} {
-    $command
-  } else {
-    after time 5 "find_on_screen {$message} {$command}"
-  }
-}
-
-#
 # Chain of reactions
 #
 
 proc call_forth83 {} {
+  message "Calling Forth83..."
   type "F83\r"
   wait_response "Version 2.1.0 Modified 01Jun84" {open_blk_file}
 }
 
 proc open_blk_file {} {
-  foreach path [list "forth83/dist/msxbios.blk" "forth83/dist/vt52.blk"] {
+  message "Opening BLK files..."
+  foreach path [list "forth83/dist/vt52.blk" "forth83/dist/msxbios.blk"] {
     set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
+    message "Opening $filename..."
     type "OPEN $filename\r"
     wait_response "OPEN $filename  ok" {compile}
   }
 }
 
 proc compile {} {
+  message "Compiling BLK file..."
   type "OK\r"
   wait_response "OK  ok" {save_system}
 }
 
 proc save_system {} {
+  message "Writing F83MSX.COM..."
   type "SAVE-SYSTEM F83MSX.COM\r"
   wait_response "SAVE-SYSTEM F83MSX.COM  ok" {bye}
 }
 
 proc bye {} {
+  message "Closing Forth83..."
   type "BYE\r"
   wait_response "Pages" {replace_autoexec}
 }
 
 proc replace_autoexec {} {
+  message "Replacing AUTOEXEC.BAT..."
   type "copy AUTOEXEC.BA2 AUTOEXEC.BAT\r"
   wait_response "1 file copied" {done}
 }
@@ -100,7 +96,7 @@ proc done {} {
 diskmanipulator create forth.dsk 720k -dos1
 virtual_drive forth.dsk
 diskmanipulator format virtual_drive -dos1
-diskmanipulator import virtual_drive dsk/ [glob -type f forth83/dist/*.blk]
+diskmanipulator import virtual_drive dsk/ [glob -type f forth83/dist/*.blk] forth83/AUTOEXEC.BA2
 
 machine Sony_HB-F1XV
 diska forth.dsk

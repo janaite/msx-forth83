@@ -2,7 +2,7 @@ set blk_files [list "msxbios.blk" "vt52.blk"]
 
 #
 # Wait for boot message "BOOT COMPLETED"
-# 
+#
 
 proc wait_boot {{cmd ""}} {
   if {[string first "BOOT COMPLETED" [get_screen]] >= 0} {
@@ -117,7 +117,7 @@ set renderer none
 diskmanipulator create forth.dsk 720k -dos1
 virtual_drive forth.dsk
 diskmanipulator format virtual_drive -dos1
-diskmanipulator import virtual_drive ../dsk/ [glob -type f dist/*.blk] AUTOEXEC.BA2
+diskmanipulator import virtual_drive dsk/ [glob -type f dist/*.blk] AUTOEXEC.BA2
 
 machine Sony_HB-F1XV
 diska forth.dsk

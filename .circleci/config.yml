@@ -17,6 +17,7 @@ jobs:
     working_directory: /root/forth83
     steps:
       - checkout
+      - run: mkdir -p dsk && cp -f ../dsk/* dsk
       - run: make
       - run: ../docker-entrypoint.sh openmsx -script compile.tcl
       - run: mv /root/forth83/forth.dsk /root/forth83/msx-forth83-latest.dsk
@@ -33,9 +34,9 @@ jobs:
           paths:
             - msx-forth83-latest.dsk
             - blk/*
-  
+
   deploy-job:
-    docker: 
+    docker:
      - image: cimg/base:stable
 
     steps:
@@ -50,12 +51,12 @@ jobs:
       - run: tar czf msx-forth83-blk.tar.gz -C /tmp/blk .
       - run: gh release upload latest msx-forth83-blk.tar.gz
       #  - github-cli/release:
-      #      draft: false 
-      #      files: /root/msx-forth83-latest.dsk 
-      #      prerelease: true 
-      #      tag: latest 
-      #      title: Latest release 
-      #      version: latest 
+      #      draft: false
+      #      files: /root/msx-forth83-latest.dsk
+      #      prerelease: true
+      #      tag: latest
+      #      title: Latest release
+      #      version: latest
       #      token: GITHUB_TOKEN
 
 workflows:
@@ -64,12 +65,12 @@ workflows:
       - build-job
       # - github-cli/release:
       #     draft: false
-      #     files: msx-forth83-latest.dsk 
+      #     files: msx-forth83-latest.dsk
       #     prerelease: true
       #     tag: latest
       #     title: Latest build
-      #     requires: 
+      #     requires:
       #       - build-job
       - deploy-job:
-          requires: 
+          requires:
             - build-job

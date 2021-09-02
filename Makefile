@@ -5,8 +5,8 @@
 # JANAITE 20181126
 #
 
-FILES  = msxbios.blk t-sc2.blk t-delay.blk 
-FILES += v9990.blk t-v9990.blk 
+FILES  = msxbios.blk t-sc2.blk t-delay.blk
+FILES += v9990.blk t-v9990.blk
 FILES += msxdos.blk t-msxdos.blk
 FILES += jed.blk flash.blk nesman.blk
 FILES += vt52.blk
@@ -40,3 +40,7 @@ clean:
 .PHONY: test
 test:
 	openmsx -script openmsx.tcl -machine Sony_HB-F1XV -ext video9000 -ext ASCII_MSX-DOS2 -diska ./dist/
+
+.PHONY: dsk
+dsk:
+	openmsx -script compile.tcl -machine Sony_HB-F1XV

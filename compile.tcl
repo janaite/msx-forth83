@@ -1,4 +1,4 @@
-set blk_files [list "forth83/dist/msxbios.blk" "forth83/dist/vt52.blk"]
+set blk_files [list "msxbios.blk" "vt52.blk"]
 
 #
 # Wait for boot message "BOOT COMPLETED"
@@ -117,7 +117,7 @@ set renderer none
 diskmanipulator create forth.dsk 720k -dos1
 virtual_drive forth.dsk
 diskmanipulator format virtual_drive -dos1
-diskmanipulator import virtual_drive dsk/ [glob -type f forth83/dist/*.blk] forth83/AUTOEXEC.BA2
+diskmanipulator import virtual_drive ../dsk/ [glob -type f dist/*.blk] AUTOEXEC.BA2
 
 machine Sony_HB-F1XV
 diska forth.dsk

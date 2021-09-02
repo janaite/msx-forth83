@@ -18,9 +18,9 @@ jobs:
     steps:
       - checkout
       - run: make
-      - run: cd /root && ./docker-entrypoint.sh openmsx -script /root/forth83/compile.tcl
-      - run: mv /root/forth.dsk /root/msx-forth83-latest.dsk
-      - run: cp /root/msx-forth83-latest.dsk /tmp/msx-forth83-latest.dsk
+      - run: ../docker-entrypoint.sh openmsx -script compile.tcl
+      - run: mv /root/forth83/forth.dsk /root/forth83/msx-forth83-latest.dsk
+      - run: cp /root/forth83/msx-forth83-latest.dsk /tmp/msx-forth83-latest.dsk
       - run: mkdir /tmp/blk
       - run: cp /root/forth83/dist/*.blk /tmp/blk
       - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV

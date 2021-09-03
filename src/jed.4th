@@ -1,128 +1,37 @@
-   SCR #n                filename.blk
-   JED
-0---------1---------2---------3---------4---------5---------6--
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15************************************************************
+\ JED a simple editor, it's "Just an EDitor"          ??AGO21JJN
+*** unfinished !!! *** 
+USAGE: JED ( block -- )
+
+Ctrl + Shift + UP    = first block
+Ctrl + Shift + DOWN  = last block
+Ctrl + Shift + LEFT  = previous block
+Ctrl + Shift + RIGHT = next block
+Shift + UP    = first line
+Shift + DOWN  = last line
+Shift + LEFT  = first column
+Shift + RIGHT = last column
+
+ESC = save and exit
+HOME = save all and redraw screen
 ----
 
-msx also
+only definitions FORTH also
+vocabulary JED2
 
+JED2 definitions
 
-\ decimal 2 30 thru
+.( wait several seconds to finish...)
+
+( Load all blocks )
 decimal 2 capacity 1- thru
 
+.( loading OK)
 ----
-
-hex 
-
-\ F3B3 constant #TXTNAM
-
-\ 2 bytes, base address of current pattern name table
-F922 constant #NAMBAS
-
-F3B0 constant #LINLEN \ 1 byte, current screen width per line
-F3B1 constant #CRTCNT \ 1 byte, number of lines of current screen
-
-----
-decimal
-: VADDR ( row col -- vaddr )
- swap #LINLEN c@ * + 
- #NAMBAS @ + ;
-
-decimal
-: FASTCLS ( -- )
-  0 0 vaddr   #LINLEN c@ #CRTCNT c@ *   BL vramfill ;
-
-----
-decimal
-: SHOW1Kfast ( buffer row col  -- )
-  vaddr
-  16 0 do 
-    2dup 64 >vram
-    swap 64 + swap 80 +
-  loop 2drop ;
-----
-
-decimal
-: show1k ( buffer row col -- )
-  \ show1kfast ;
-  false cursor
-  drop drop
-  16 0 do
-    I 5 + 4 posit
-    64 0 do
-      dup c@ chput
-      1+
-    loop
-  loop
-  drop true cursor
-  ;
-----
-decimal
-: fastruler ( row col -- )
-  vaddr
-  dup 1+ 64 45 vramfill
-  7 0 do
-    dup  48 i + swap vram!
-    10 + 
-  loop ;
-
-----
-decimal
-
-4 constant #numberline-row
-0 constant #numberline-col
-
-: fastnumberlines ( row col -- )
-  16 0 do
-    i 10 mod
-    ascii 0 +
-    #numberline-row i + #numberline-col 1+ vaddr vram!
-
-    i 10 /
-    ascii 0 +
-    #numberline-row i + #numberline-col vaddr vram!
-  loop ;
-----
-\ layout coordinates
-
-decimal
-( always from upper-left screen corner )
-2  constant #ruler-row
-2  constant #ruler-col
-1  constant #status-row
-2  constant #status-col
-60 constant #status-len
-4  constant #vp-row
-3  constant #vp-col
-----
-
-\ text is 16 rows (from 0 to 15) by 64 columns (from 0 to 63)
-variable txt-row \ current row inside text
-variable txt-col \ current column inside text
-
-decimal
-
-0 txt-row !
-0 txt-col !
-
-15 constant #max-txt-row
-63 constant #max-txt-col
-----
+\ keycodes constants
 
 hex
 1B constant #key-esc
-1E constant #key-up   
+1E constant #key-up
 1F constant #key-down
 1D constant #key-left
 1C constant #key-right
@@ -133,6 +42,7 @@ hex
 7F constant #key-del
 18 constant #key-select
 ----
+\ keycodes constants (cont.)
 
 hex 
 57 constant #key-W
@@ -142,232 +52,274 @@ hex
 58 constant #key-X
 78 constant #key-XX 
 ----
-defer enter-edit-state
-defer enter-menu-state
+\ variables
 
-----
-: draw-blk ( addr -- )
-  #vp-row #vp-col show1k ;
+\ text is 16 rows (from 0 to 15) by 64 columns (from 0 to 63)
+variable txt-row \ current row inside text
+variable txt-col \ current column inside text
+variable current-block
 
-: draw-ruler ( -- )
-  #ruler-row #ruler-col fastruler ;
-
-: draw-linenumber ( -- )
-  fastnumberlines ;
-
-----
-
-: draw-cursor ( -- )
-  txt-row @ #vp-row 1+ +
-  txt-col @ #vp-col 1+ +
-    posit ;
-
-: REDRAW ( -- )
-  fastcls
-  draw-ruler
-  0 block draw-blk 
-  draw-cursor ;
------
-\ : fastnumberlines ( row -- )
-\ 0 vaddr
-\ 2 0 do i .
-\ 10 0 do j .
-\ #LINLEN c@ +
-\ ;
-----
-: BADDR ( addr row col -- addr )
-  swap 64 * + + ;
-
-\ char @ dup 
-\  buffer row @ col @ baddr c!
-\  row @ col @ vaddr vram!
-
-----
-
-: roll-cur-up ( S -- S )
-  txt-row @
-  dup 0> if 1- txt-row ! else
-  drop #max-txt-row txt-row ! then ;
-
-: act-cur-up ( -- )
-  roll-cur-up
-  draw-cursor ;
-----
-
-: roll-cur-down ( -- )
-  txt-row @
-  dup #max-txt-row < if 1+ txt-row ! else 
-  drop 0 txt-row ! then ;
-
-: act-cur-down ( -- )
-  roll-cur-down
-  draw-cursor ;
-----
-
-: roll-cur-left ( S -- S )
-  txt-col @
-  dup 0> if 1- txt-col ! else
-  drop #max-txt-col txt-col ! then ;
-
-: act-cur-left ( -- )
-  roll-cur-left
-  draw-cursor ;
-----
-
-: roll-cur-right ( S -- S )
-  txt-col @
-  dup #max-txt-col < if 1+ txt-col ! else
-  drop 0 txt-col ! then ;
-
-: act-cur-right ( -- )
-  roll-cur-right
-  draw-cursor ;
-
-----
-hex
-
-: status-cls ( -- )
-  #status-row #status-col vaddr #status-len BL vramfill ;
-
-\ >VRAM ( from-addr to-vaddr len -- )
-
-: (.status") 
-  status-cls
-  R> COUNT 2DUP + >R ( str-addr str-len )
-  #status-row #status-col vaddr ( from-addr len to-vaddr )
-  swap >vram ;
-
-: .status" compile (.status") ," ; immediate
-----
-: act-cur-begin ;
-
-: act-cur-next ( -- )
-  0 txt-col !
-  roll-cur-down
-  draw-cursor ;
-
-----
+variable buf
+variable pbuf
 
 variable what-state
 variable editor-quit
-variable current-block
+----
+\ constants
+
+hex 1B constant #ESC
+: esc #ESC emit ;
+
+decimal
+15 constant #max-txt-row
+63 constant #max-txt-col
+HEX
+F3B0 constant #LINLEN \ 1 byte, current screen width per line
+F3B1 constant #CRTCNT \ 1 byte, number of lines of current screen
+----
+\ utility words
+decimal
+: ++ ( addr -- ) dup @ 1+ swap ! ;
+: -- ( addr -- ) dup @ 1- swap ! ;
+: ++max ( addr n -- ) over @ 1+ min swap ! ;
+: --min ( addr n -- ) over @ 1- max swap ! ;
+: max-blk ( -- n) capacity 1- ; \ shadows,use capacity 2/ ;
+: 80cols? ( -- b) #LINLEN c@ 80 >= ;
+----
+\ txt-col and txt-row auxiliary words
+
+: txt-col++ ( -- ) txt-col #max-txt-col ++max ;
+: txt-col-- ( -- ) txt-col 0 --min ;
+: txt-row++ ( -- ) txt-row #max-txt-row ++max ;
+: txt-row-- ( -- ) txt-row 0 --min ;
 
 ----
+( terminal VT52 )
 
-: act-quit ( -- )
-  true editor-quit ! ;
+decimal
+: vt.cls ( -- )      esc ascii E emit ;
+: vt.cls-end ( -- )  esc ascii j emit ;
+: vt.cls-eol ( --)   esc ascii K emit ;
+: vt.cur-full ( -- ) esc ascii x emit ascii 4 emit ;
+: vt.cur-half ( -- ) esc ascii y emit ascii 4 emit ; 
+: vt.cur-show ( -- ) esc ascii y emit ascii 5 emit ;
+: vt.cur-hide ( -- ) esc ascii x emit ascii 5 emit ;
+: vt ( -- ) vt.cur-show ;
+: vt.cur-pos ( line column -- ) 
+   32 + swap 32 + esc ascii Y emit emit emit ;
+----
+decimal
 
-: act-write ( -- )
-  .status" Salvando arquivo..." 
-  .status" Arquivo salvo! " 
-  enter-edit-state
+: txt-rowcol>offset ( -- n )
+  txt-row @ 64 *
+  txt-col @ + ;
+
+: cursor.update ( -- )
+ txt-row @ 1 + txt-col @ 15 + vt.cur-pos
+ txt-row @ 16 * txt-col @ + buf + pbuf !
 ;
+----
+( drawing routines )
 
-: act-menu-esc
- enter-edit-state ;
+: 9dash ( -- ) 9 0 do ascii - emit loop ;
+: 3dash ( -- ) ascii - dup emit dup emit emit ;
+: emitnum ( n -- ) ascii 0 + emit ;
+: ruler ( -- ) 
+  0 emitnum 7 1 do 
+    9dash i emitnum 
+  loop
+  3dash ascii * emit ;
+: ruler.draw ( -- ) 0 15 vt.cur-pos ruler ;
+: emit2num ( n -- ) dup 10 / emitnum 10 mod emitnum ; ( decimal )
+----
+
+: emit64chars ( addr -- addr+64 )
+64 0 do dup c@ emit 1+ loop ;
+
+: draw ( addr -- ) ruler.draw 
+16 0 do
+  i 1+ 13 vt.cur-pos 
+  i emit2num 32 emit emit64chars
+loop ;
+
+: sh ( blk -- )
+ block vt.cur-hide draw vt.cur-show ;
+----
+
+: scr.draw ( -- )
+ ruler.draw
+ 16 0 do
+  i 1+ 12 vt.cur-pos 
+  i emit2num 32 emit
+ loop ;
+----
+( read CONTROL and SHIFT key state )
+
+hex
+: newkey6@ FBE5 6 + c@ ;
+: kb.ctrl? ( -- f) newkey6@ 2 and 0= ;
+: kb.shift? ( -- f) newkey6@ 1 and 0= ;
 
 ----
 
-: do-menu ( -- )
- .status" <Esc>ape / <Q>uit / <W>rite / <X> write and eXit" 
- key
- dup #key-esc = if act-menu-esc else
- dup #key-q   = if act-quit else
- dup #key-qq  = if act-quit else
- dup #key-w   = if act-write else
- dup #key-ww  = if act-write else
- dup #key-x   = if act-write act-quit else
- dup #key-xx  = if act-write act-quit
- then then then then then then then
- drop ;
+decimal
+: show-current-block ( -- )
+  0 txt-col !
+  current-block @ block
+  vt.cur-hide
+  #max-txt-row 1+ 0 do
+    I txt-row ! cursor.update
+    emit64chars
+  loop
+  drop
+  0 txt-row ! vt.cur-show cursor.update ;
+----
+decimal
+: act-cur-bol ( -- )               0 txt-col ! cursor.update ;
+: act-cur-eol ( -- )    #max-txt-col txt-col ! cursor.update ;
+: act-cur-line0 ( -- )             0 txt-row ! cursor.update ;
+: act-cur-line15 ( -- ) #max-txt-row txt-row ! cursor.update ;
+
+: act-cur-left ( -- )  txt-col-- cursor.update ;
+: act-cur-right ( -- ) txt-col++ cursor.update ;
+: act-cur-up ( -- )    txt-row-- cursor.update ;
+: act-cur-down ( -- )  txt-row++ cursor.update ;
+: act-cur-begin ( -- ) ;
+: act-cur-bol-newline ( -- );
+----
+
+: act-next-blk ( -- ) 
+ current-block max-blk ++max show-current-block ;
+
+: act-prev-blk ( -- ) 
+ current-block 0 --min show-current-block ;
+
+: act-first-blk ( -- )
+ 0 current-block ! show-current-block ;
+
+: act-last-blk ( -- )
+ max-blk current-block ! show-current-block ;
+----
+
+: kb.left ( -- )
+ kb.ctrl? IF 
+  kb.shift? IF act-prev-blk ELSE act-cur-bol THEN
+ ELSE
+  act-cur-left
+ THEN ;
+
+: kb.right ( -- )
+ kb.ctrl? IF 
+  kb.shift? IF act-next-blk ELSE act-cur-eol THEN
+ELSE 
+  act-cur-right
+THEN ;
+
+----
+: kb.up ( -- )
+ kb.ctrl? IF 
+  kb.shift? IF act-first-blk ELSE act-cur-line0 THEN
+ ELSE 
+  act-cur-up 
+ THEN ;
+
+: kb.down ( -- )
+ kb.ctrl? IF
+  kb.shift? IF act-last-blk ELSE act-cur-line15 THEN
+ ELSE
+  act-cur-down
+ THEN ;
+----
+: kb.home ( -- ) SAVE-BUFFERS show-current-block ;
+: kb.return ( -- ) act-cur-bol-newline ;
+: kb.ins ( -- ) ;
+: kb.del ( -- ) ;
+----
+
+: putchar-into-buffer ( ch -- ) 
+  current-block @ block txt-rowcol>offset +
+  c! UPDATE ;
 
 ----
 
-: act-edit-default ( c -- c )
- dup 
- dup BL >= swap 127 <= and if
-   dup chput act-cur-right 
- then ;
+: act-menu ( -- ) 
+ true editor-quit ! ;
 
-----
-: act-menu
-  enter-menu-state ;
-
-: do-quit ( -- ) ;
-----
-
-: current-block-next! ( S -- S )
-  current-block @
-  dup capacity 1- < if
-    1+ current-block ! then ;
-  
-: current-block-prev! ( S -- S )
-  current-block @
-  dup 0> if 
-    1- current-block ! then ;
+: act-accept-char ( ch -- )
+  txt-col @ #max-txt-col <= IF
+    dup putchar-into-buffer
+    emit
+    txt-col ++
+  THEN
+ ;
 
 ----
 
-: act-blk-prev ( c -- c )
-  .status" BLK previous"
-  current-block-prev!
-  current-block @ block draw-blk draw-cursor ;
+decimal 
+: accept-char? ( ch -- bool) 
+  BL >= ;
 
-: act-blk-next ( c -- c )
-  .status" BLK next"
-  current-block-next!
-  current-block @ block draw-blk draw-cursor ;
+: act-edit-default ( key -- key )
+  dup accept-char? IF 
+    dup act-accept-char cursor.update
+  THEN ;
+
 ----
+
 : do-edit ( -- )
   key
-  dup #key-esc    = if act-menu      else
-  dup #key-up     = if act-cur-up    else
-  dup #key-down   = if act-cur-down  else
-  dup #key-left   = if act-cur-left  else
-  dup #key-right  = if act-cur-right else
-  dup #key-home   = if act-cur-begin else
-  dup #key-return = if act-cur-next  else
-  dup #key-ins    = if act-blk-prev  else
-  dup #key-del    = if act-blk-next  else
+  dup #key-esc    = if act-menu  else
+  dup #key-up     = if kb.up     else
+  dup #key-down   = if kb.down   else
+  dup #key-left   = if kb.left   else
+  dup #key-right  = if kb.right  else
+  dup #key-home   = if kb.home   else
+  dup #key-return = if kb.return else
+  dup #key-ins    = if kb.ins    else
+  dup #key-del    = if kb.del    else
   act-edit-default
   then then then then then then then then then
   drop ;
 ----
 
-: enter-edit-state-impl ( -- )
-  ['] do-edit what-state ! 
-  .status" Edit mode..." ;
 
-: enter-menu-state-impl ( -- )
-  ['] do-menu what-state !
-  ;
+
+: blk-load ( n -- )
+ dup current-block !
+ block buf !
+;
 ----
+\ init
 
-: jed-ini
-  ['] enter-edit-state-impl IS enter-edit-state
-  ['] enter-menu-state-impl IS enter-menu-state
-  false editor-quit !
-  10 current-block !
-  fastcls
-  msx true cursor forth
-  0 txt-row !
-  0 txt-col ! 
-  draw-ruler
-  draw-linenumber
-  current-block @ block draw-blk
-  draw-cursor ;
+: jed-ini ( -- )
+ 80cols? NOT ABORT" JED requires 80 columns"
+ 0 txt-row !
+ 0 txt-col !
+ 0 current-block !
+ false editor-quit !
+ vt.cur-half
+;
 ----
-
-: jed-finish
-  23 0 posit ;
+\ finish
+: jed-finish ( -- )
+ vt.cls
+ vt.cur-show
+ SAVE-BUFFERS
+;
 
 ----
+\ Main JED word
 
-: jed ( -- )
+: jed ( n -- )
   jed-ini
-  enter-edit-state
+  vt.cur-hide vt.cls scr.draw 
+  vt.cur-show cursor.update
+  blk-load show-current-block
+  \ enter-edit-state
   begin
-    what-state @ execute 
+    do-edit
+  \  what-state @ execute 
   editor-quit @ until
   jed-finish ;
+
 ----

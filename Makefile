@@ -2,7 +2,7 @@
 # Convert 4th files into BLK file format
 # used by Forth F83
 #
-# JANAITE 20181126
+# JANAITE 20181126, 2020
 #
 
 FILES  = msxbios.blk t-sc2.blk t-delay.blk
@@ -23,7 +23,6 @@ vpath %.c src
 .PHONY : all
 all: $(CONVBLK) $(BLKS)
 
-
 $(DIST_DIR)/%.blk: %.4th
 	cat $< | $(CONVBLK) > $@
 
@@ -36,11 +35,12 @@ RRM = rm -f -r
 clean:
 	$(RRM) bin/*
 	$(RRM) dist/*.blk
+	$(RRM) forth.dsk
 
 .PHONY: test
 test:
 	openmsx -script openmsx.tcl -machine Sony_HB-F1XV -ext video9000 -ext ASCII_MSX-DOS2 -diska ./dist/
 
 .PHONY: dsk
-dsk:
+dsk: $(CONVBLK) $(BLKS)
 	openmsx -script compile.tcl -machine Sony_HB-F1XV

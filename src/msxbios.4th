@@ -69,6 +69,7 @@ hex
 0111 msxbios (MAPXYC)
 0120 msxbios (SETC)
 ----
+
 \ DISSCR ( -- ), ENASCR ( -- )
 hex
 code DISSCR ( -- )
@@ -453,13 +454,6 @@ code SETC ( -- )
    next
 end-code
 
-hex
-: ATRBYT! ( c --) F3F2 ! ;
-: ATRBYT@ ( -- c) F3F2 @ ;
-: GXPOS! ( u --) FCB3 ! ;
-: GXPOS@ ( -- u) FCB3 @ ;
-: GYPOS! ( u --) FCB5 ! ;
-: GYPOS@ ( -- u) FCB5 @ ;
 ----
 
 code MAPXYC ( x y --)
@@ -474,12 +468,7 @@ code MAPXYC ( x y --)
 end-code
 ----
 
-\ Ported from: Micro Sistemas n88 pages 42-43
-: PLOT ( x y c -- )
-   ATRBYT@ >R
-   ATRBYT!
-   MAPXYC
-   SETC
-   R> ATRBYT!
-;
-----
+hex
+F3F2 constant #ATRBYT
+FCB3 constant #GXPOS
+FCB5 constant #GYPOS

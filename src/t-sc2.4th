@@ -2,40 +2,14 @@
 
 ----
 
-msx also forth definitions
+\ msx also forth definitions
 
-decimal 2 8 thru
-
-----
-
-decimal 
-
-: SC2TILE ( -- ) ( run-time: tile -- )
-  create
-  does> ( tile addr -- )
-    swap 8 * 2dup
-    8 ( from to len -- ) >vram
-    2dup
-    2048 + 8 ( from to len -- ) >vram
-    4096 + 8 ( from to len -- ) >vram ;
+decimal 2 capacity 1- thru
 
 ----
 
 hex
-
-: SC2PALETTE ( -- ) ( run-time: tile -- )
-  create
-  does> ( tile param-addr -- )
-    swap 8 * 2000 + 
-    2dup
-    8        ( from to-vram len -- ) >vram
-    2dup
-    800  + 8 ( from to-vram len -- ) >vram
-    1000 + 8 ( from to-vram len -- ) >vram ;
-----
-
-hex
-1800 constant #VDPNAMETABLE
+1800 constant #VDPNAMETABLE \ GRPNAM@
 
 decimal
 : PUTTILE ( tile row col -- )
@@ -85,7 +59,7 @@ decimal
 
 : testwait ( -- )
   chget drop
-  settxt ;
+  initxt ;
 ----
 
 : test ( -- )

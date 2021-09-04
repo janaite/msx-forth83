@@ -252,13 +252,13 @@ code CLRSPR ( -- )
    B PUSH   (CLRSPR)   B POP   next
 end-code
 
-code CALPAT ( n -- addr )
+code CALPAT ( b -- addr )
    H POP      L A MOV
    (CALPAT)   H PUSH
    next
 end-code
 
-code CALATR ( n -- addr )
+code CALATR ( b -- addr )
    H POP      L A MOV
    (CALATR)   H PUSH
    next
@@ -472,3 +472,29 @@ hex
 F3F2 constant #ATRBYT
 FCB3 constant #GXPOS
 FCB5 constant #GYPOS
+FCAF constant #SCRMOD
+
+----
+
+hex
+F3DF constant #RG0SAV
+F3E0 constant #RG1SAV
+F3E1 constant #RG2SAV
+F3E2 constant #RG3SAV
+F3E3 constant #RG4SAV
+F3E4 constant #RG5SAV
+F3E5 constant #RG6SAV
+F3E6 constant #RG7SAV
+F3E7 constant #STATFL
+----
+
+: RG0SAV@ ( --b) #RG0SAV C@ ;
+: RG1SAV@ ( --b) #RG1SAV C@ ;
+: RG2SAV@ ( --b) #RG2SAV C@ ;
+: RG3SAV@ ( --b) #RG3SAV C@ ;
+: RG4SAV@ ( --b) #RG4SAV C@ ;
+: RG5SAV@ ( --b) #RG5SAV C@ ;
+: RG6SAV@ ( --b) #RG6SAV C@ ;
+: RG7SAV@ ( --b) #RG7SAV C@ ;
+: STATFL@ ( --b) #STATFL C@ ;
+----

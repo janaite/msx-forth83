@@ -11,14 +11,6 @@ decimal 2 capacity 1- thru
 hex
 1800 constant #VDPNAMETABLE \ GRPNAM@
 
-decimal
-: PUTTILE ( tile row col -- )
-  swap 32 * + #VDPNAMETABLE + vram! ;
-
-decimal
-: CLS ( tile -- )
-  #VDPNAMETABLE 768 rot ( addr len char -- ) VRAMFILL ;
-
 ----
 
 hex
@@ -31,6 +23,8 @@ sc2tile tile4 f8 c, 68 c, f8 c, f8 c, f8 c, 68 c, 68 c, 80 c,
 sc2palette pal0 62 c, 62 c, 62 c, 62 c, 62 c, 62 c, 62 c, 62 c,
 sc2palette pal1 B2 c, B2 c, B2 c, B2 c, B2 c, B2 c, B2 c, B2 c,
 
+sc2sprite8 sprite1 18 C, 18 C, 7E C, BD C, BD C, 24 C, 24 C, 66 C,
+
 ----
 
 decimal
@@ -41,7 +35,8 @@ decimal
   1 14 15 puttile
   2 14 16 puttile
   3 15 15 puttile
-  4 15 16 puttile ;
+  4 15 16 puttile
+  0 16 16 0 15 putsprite8 ;
 
 ----
 
@@ -57,6 +52,9 @@ decimal
   2 pal1  3 pal1
   4 pal1  ;
 
+: testsprites ( -- )
+  0 sprite1 ;
+
 : testwait ( -- )
   chget drop
   initxt ;
@@ -66,4 +64,5 @@ decimal
   testinit
   testtiles
   testpalettes
+  testsprites
   testwait  ;

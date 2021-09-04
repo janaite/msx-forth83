@@ -109,3 +109,112 @@ hex
     800  + 8 ( from to-vram len -- ) >vram
     1000 + 8 ( from to-vram len -- ) >vram ;
 ----
+
+decimal
+: PUTTILE ( tile row col -- )
+  swap 32 * + GRPNAM@ + vram! ;
+
+decimal
+: CLS ( tile -- )
+  GRPNAM@ 768 rot ( addr len char -- ) VRAMFILL ;
+
+----
+( screen mode - up to screen 8)
+
+: SCRMOD@ ( -- b) #SCRMOD C@ ;
+: SCRMOD! ( b --) #SCRMOD C! ;
+
+----
+\ Get Sprite size
+
+\ n: sprite size in bytes
+\ TRUE: if 16x16 sprite, else FALSE
+code GSPSIZ ( -- n f) \ TODO: test
+  (GSPSIZ)
+  0 D MVI   A E MOV   D PUSH
+  0 E MVI  \ DE="false"
+  C0<> IF  \ Jump to THEN when CY=0
+    D DCX  \ if CY=1, DE="true"
+  THEN
+  D PUSH
+  next
+end-code
+----
+
+hex
+
+: SC2SPRITE8 ( -- )
+  create
+  does> ( pat# from-addr -- )
+    swap 8 * #GRPPAT @ + 8 ( from-addr to-vram len -- ) >vram ;
+
+: SC2SPRITE ( -- )
+  create
+  does> ( pat# from-addr -- )
+    swap 32 * #GRPPAT @ + 32 ( from-addr to-vram len -- ) >vram ;
+----
+
+decimal
+
+: PUTSPRITE8 ( sprite# row col pat# color* -- )
+  here 3 + C!
+  here 2 + C!
+  here 1+  C!
+  1- here C!
+  here SWAP 4 * #GRPATR @ + 4 ( from-addr to-vram len -- ) >vram ;
+----
+
+decimal
+
+: PUTSPRITE ( sprite# row col pat# color* -- )
+  here 3 + C!
+  here 2 + C!
+  here 1+  C!
+  1- here C!
+  here SWAP #GRPATR @ + 4 ( from-addr to-vram len -- ) >vram ;
+----
+
+decimal
+: spr.ini ( --) CLRSPR ;
+
+: spr.load ( blknum -- ) \ uses 2 blocks
+  DUP
+  BLOCK GRPPAT@ 1024 >vram
+  1+ BLOCK GRPPAT@ 1024 + 1024 >vram ;
+----
+
+decimal
+: spr.base  ( spr -- addr) 2* 2* GRPATR@ + ;
+
+: spr.y@     ( spr -- n) spr.base VRAM@ ;
+: spr.y!     ( n spr --) spr.base VRAM! ;
+: spr.x@     ( spr -- n) spr.base 1+ VRAM@ ;
+: spr.x!     ( n spr --) spr.base 1+ VRAM! ;
+: spr.pat@   ( spr -- n) spr.base 2+ VRAM@ ;
+: spr.pat!   ( n spr --) spr.base 2+ VRAM! ;
+
+----
+
+hex
+: spr.ec+color@ ( spr -- n) spr.base 3 + VRAM@ ;
+: spr.ec+color! ( n spr --) spr.base 3 + VRAM! ;
+
+: spr.color@ ( spr -- n) spr.ec+color@ 31 AND ;
+: spr.color! ( n spr --) SWAP 31 AND SWAP spr.ec+color! ;
+
+: spr.ec? ( spr -- f)
+  spr.ec+color@ 80 AND 0<> ;
+----
+
+hex
+: spr.ec1! ( spr --)
+  DUP spr.ec+color@ 80 OR
+  SWAP spr.ec+color! ;
+
+: spr.ec0! ( spr --)
+  DUP spr.ec+color@ 7F AND
+  SWAP spr.ec+color! ;
+
+: spr.ec! ( f spr --)
+  SWAP IF spr.ec1! ELSE spr.ec0! THEN ;
+----

@@ -11,14 +11,6 @@ decimal 2 capacity 1- thru
 hex
 1800 constant #VDPNAMETABLE \ GRPNAM@
 
-decimal
-: PUTTILE ( tile row col -- )
-  swap 32 * + #VDPNAMETABLE + vram! ;
-
-decimal
-: CLS ( tile -- )
-  #VDPNAMETABLE 768 rot ( addr len char -- ) VRAMFILL ;
-
 ----
 
 hex

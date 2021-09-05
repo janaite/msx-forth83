@@ -86,6 +86,7 @@ int main(int argc, char **argv) {
 
 	bool verbose=false;
 	unsigned invalidchars=0;
+	int result=0;
 	
 	if (argc > 2) {
 		fprintf(stderr, "Text to F83 BLK format.\n %s[-v]\n", argv[0]);
@@ -145,6 +146,7 @@ int main(int argc, char **argv) {
 			fprintf(stderr, ">>> ERROR: line %04d overflows 16 rows inside block #%04d <<<\n", line_input, block);
 			line_in_block=0;
 			block++;
+			result = -1;
 		}
 		invalidchars += replaceinvalidchars(buffer, sizeof(buffer));
 		putdata(buffer, sizeof(buffer), stdout);
@@ -167,5 +169,5 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Invalid chars replaced (includes CR/LF): %04d\n", invalidchars);
 	}
 
-	return 0;
+	return result;
 }

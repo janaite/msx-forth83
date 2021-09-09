@@ -15,14 +15,14 @@ end-code
 : debugmode cr ." Sending byte " dup . ." to debug device at #2e..." _debugmode ;
 
 ----
-hex code _debug ( byte -- )
+hex code _debugc ( byte -- )
    E1 C,              \ POP HL
    7D C,              \ LD A, L
    D3 C, 2F C,        \ OUT 2F, A
    next
 end-code
 
-: debugc cr ." Sending " dup emit ."  to debug device at #2f..." _debug ;
+: debugc cr ." Sending " dup emit ."  to debug device at #2f..." _debugc ;
 
 ----
 decimal

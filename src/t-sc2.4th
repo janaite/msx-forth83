@@ -51,7 +51,7 @@ decimal
   0 pal0  1 pal1
   2 pal1  3 pal1
   4 pal1  ;
-
+----
 : testsprites ( -- )
   0 sprite1 ;
 

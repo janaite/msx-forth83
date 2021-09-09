@@ -1,4 +1,4 @@
-set blk_files [list msxbios.blk vt52.blk grp.blk]
+set blk_files [list msxbios.blk vt52.blk grp.blk debug.blk]
 
 #
 # Wait for boot message "BOOT COMPLETED"
@@ -126,6 +126,11 @@ diska forth.dsk
 set save_settings_on_exit off
 set speed 9999
 set fullspeedwhenloading on
+
+# Debug
+ext debugdevice
+set debugoutput stdout
+#debug set_watchpoint write_io {0x2f} {} {message "$::wp_last_value received from debugdevice"}
 
 message "Detecting boot..."
 wait_boot call_forth83

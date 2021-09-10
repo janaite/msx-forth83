@@ -140,38 +140,21 @@ code GSPSIZ ( -- n f) \ TODO: test
   next
 end-code
 ----
-
 hex
-
-: SC2SPRITE8 ( -- )
-  create
-  does> ( pat# from-addr -- )
-    swap 8 * #GRPPAT @ + 8 ( from-addr to-vram len -- ) >vram ;
 
 : SC2SPRITE ( -- )
   create
   does> ( pat# from-addr -- )
-    swap 32 * #GRPPAT @ + 32 ( from-addr to-vram len -- ) >vram ;
+    swap GSPSIZ drop dup rot * #GRPPAT @ + swap ( from-addr to-vram len -- ) >vram ;
 ----
-
 decimal
 
-: PUTSPRITE8 ( sprite# y x pat# color* -- )
-  here 3 + C!
-  here 2 + C!
-  here 1+  C!
-  1- here C!
-  here SWAP #GRPATR @ + 4 ( from-addr to-vram len -- ) >vram ;
-----
-
-decimal
-
-: PUTSPRITE ( sprite# y x pat# color* -- )
-  here 3 + C!
-  here 2 + C!
-  here 1+  C!
-  1- here C!
-  here SWAP 4 * #GRPATR @ + 4 ( from-addr to-vram len -- ) >vram ;
+: PUTSPRITE ( sprite# y x pat# ec+color -- )
+  here 3 + c! ( store ec+color )
+  GSPSIZ drop 8 / * here 2+ c! ( store correct pattern )
+  here 1+ c! ( store x )
+  1- here c! ( store y - 1 )
+  here swap 4 * #GRPATR @ + 4 ( from-addr to-vram len -- ) >vram ;
 ----
 
 decimal

@@ -5,7 +5,7 @@
 # JANAITE 20181126, 2020
 #
 
-FILES  = msxbios.blk t-sc2.blk t-delay.blk
+FILES  = msxbios.blk t-delay.blk
 FILES += v9990.blk t-v9990.blk
 FILES += msxdos.blk t-msxdos.blk
 FILES += jed.blk flash.blk nesman.blk

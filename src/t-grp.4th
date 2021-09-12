@@ -53,7 +53,7 @@ decimal
   4 pal1  ;
 ----
 : testsprites ( -- )
-  sp.8 0 sprite1 ;
+  spr.8 0 sprite1 ;
 
 : testwait ( -- )
   chget drop

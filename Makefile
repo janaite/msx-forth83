@@ -9,7 +9,7 @@ FILES  = msxbios.blk t-sc2.blk t-delay.blk
 FILES += v9990.blk t-v9990.blk
 FILES += msxdos.blk t-msxdos.blk
 FILES += jed.blk flash.blk nesman.blk
-FILES += vt52.blk grp.blk debug.blk t-debug.blk
+FILES += vt52.blk grp.blk t-grp.blk debug.blk t-debug.blk
 
 DIST_DIR=dist
 CC=gcc

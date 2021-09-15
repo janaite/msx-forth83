@@ -498,3 +498,8 @@ F3E7 constant #STATFL
 : RG7SAV@ ( --b) #RG7SAV C@ ;
 : STATFL@ ( --b) #STATFL C@ ;
 ----
+
+hex FCA9 constant #CSRSW
+: CSRSW@ ( --b) #CSRSW C@ ;
+: CSRSW! ( bool--) 0= IF 0 ELSE 1 THEN #CSRSW C! ;
+----

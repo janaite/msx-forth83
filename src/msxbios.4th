@@ -518,6 +518,7 @@ code GTSTCK ( joy -- status)
  0 H MOV
  B POP
  H PUSH
+ next
 end-code
 
 ----
@@ -534,6 +535,7 @@ code GTTRIG ( button -- status)
  0 H MOV
  B POP
  H PUSH
+ next
 end-code
 ----
 
@@ -546,6 +548,6 @@ code GTPDL ( pdlnum -- status)
  0 H MOV
  B POP
  H PUSH
+ next
 end-code
 ----
-

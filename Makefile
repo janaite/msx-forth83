@@ -10,7 +10,7 @@ FILES += v9990.blk t-v9990.blk
 FILES += msxdos.blk t-msxdos.blk
 FILES += jed.blk flash.blk nesman.blk
 FILES += vt52.blk grp.blk t-grp.blk debug.blk t-debug.blk
-FILES += psg.blk
+FILES += psg.blk t-psg.blk
 
 DIST_DIR=dist
 CC=gcc

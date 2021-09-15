@@ -68,6 +68,10 @@ hex
 0093 msxbios (WRTPSG)
 0111 msxbios (MAPXYC)
 0120 msxbios (SETC)
+00D5 msxbios (GTSTCK)
+00D8 msxbios (GTTRIG)
+00DB msxbios (GTPAD)
+00DE msxbios (GTPDL)
 ----
 
 \ DISSCR ( -- ), ENASCR ( -- )
@@ -503,3 +507,45 @@ hex FCA9 constant #CSRSW
 : CSRSW@ ( --b) #CSRSW C@ ;
 : CSRSW! ( bool--) 0= IF 0 ELSE 1 THEN #CSRSW C! ;
 ----
+
+\ joy: 0=cursors, 1=port1, 2=port2
+code GTSTCK ( joy -- status)
+ H POP
+ B PUSH
+ L A MOV
+ (GTSTCK)
+ A L MOV
+ 0 H MOV
+ B POP
+ H PUSH
+end-code
+
+----
+
+\ button: 0=space, 
+\         1=port1 bt A, 2=port2 bt A
+\         3=port1 bt B, 4=port2 bt B
+code GTTRIG ( button -- status)
+ H POP
+ B PUSH
+ L A MOV
+ (GTTRIG)
+ A L MOV
+ 0 H MOV
+ B POP
+ H PUSH
+end-code
+----
+
+code GTPDL ( pdlnum -- status)
+ H POP
+ B PUSH
+ L A MOV
+ (GTPDL)
+ A L MOV
+ 0 H MOV
+ B POP
+ H PUSH
+end-code
+----
+

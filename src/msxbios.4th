@@ -532,7 +532,7 @@ code GTTRIG ( button -- status)
  L A MOV
  (GTTRIG)
  A L MOV
- 0 H MVI
+ A H MOV
  B POP
  H PUSH
  next

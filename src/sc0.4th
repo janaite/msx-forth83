@@ -9,6 +9,9 @@ hex
 : charset.slot@ ( -- slotid) F91F C@ ;
 
 ----
+
+decimal
+
 \ invert all chars in screen0/40 
 : sc0invall
  2048 0 DO
@@ -16,8 +19,10 @@ hex
   255 XOR
   TXTCGP@ I + VRAM!
  LOOP ;
-
 ----
+
+decimal
+
 \ invert a char in screen0/40
 : sc0invch ( ch --)
  8* TXTCGP@ +
@@ -27,7 +32,6 @@ hex
   OVER VRAM!
   1+
  LOOP DROP ;
- 
 ----
 
  \ redefines a char in screen0/40

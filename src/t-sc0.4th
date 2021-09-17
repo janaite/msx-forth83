@@ -11,9 +11,13 @@ ascii B SC0CHAR: newB
 ----
 
 : test-sc0
- ascii A sc0invch
- newB 
+ screen0/40
+ ." ABCDEFGHIJKLMNOPQRSTUVWXYZ"
  chget drop 
+ ascii A sc0invch
+ chget drop
+ newB
+ chget drop
  sc0invall
  chget drop
  sc0invall ;

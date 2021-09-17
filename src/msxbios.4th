@@ -196,6 +196,13 @@ F3B7 constant #TXTCGP   \ SCREEN 0 character pattern table
 F3B9 constant #TXTATR   \ SCREEN 0 sprite attribute table
 F3BB constant #TXTPAT   \ SCREEN 0 sprite pattern table
 
+: TXTNAM@ ( -- vaddr)  #TXTNAM @ ;
+: TXTCOL@ ( -- vaddr)  #TXTCOL @ ;
+: TXTCGP@ ( -- vaddr)  #TXTCGP @ ;
+: TXTATR@ ( -- vaddr)  #TXTATR @ ;
+: TXTPAT@ ( -- vaddr)  #TXTPAT @ ;
+----
+\ INITXT ( S -- )
 code INITXT ( S -- )
    B PUSH   (INITXT)   B POP   next
 end-code

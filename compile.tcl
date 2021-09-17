@@ -1,4 +1,4 @@
-set blk_files [list shift.blk msxbios.blk vt52.blk grp.blk debug.blk psg.blk]
+set blk_files [list shift.blk msxbios.blk vt52.blk grp.blk debug.blk psg.blk sc0.blk]
 
 #
 # Wait for boot message "BOOT COMPLETED"

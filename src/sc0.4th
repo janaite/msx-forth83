@@ -28,7 +28,7 @@ hex
   1+
  LOOP DROP ;
  
- ----
+----
 
  \ redefines a char in screen0/40
 : SC0CHAR: ( ch -- )
@@ -37,3 +37,4 @@ hex
   DUP 1+ SWAP C@ ( from-addr char)
   8* TXTCGP@ +   ( from-addr to-addr)
   8 >VRAM ;
+----

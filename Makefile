@@ -5,13 +5,16 @@
 # JANAITE 20181126, 2020
 #
 
-FILES  = msxbios.blk shift.blk t-shift.blk t-delay.blk
+FILES  = msxbios.blk
+FILES += shift.blk t-shift.blk t-delay.blk
 FILES += v9990.blk t-v9990.blk
 FILES += msxdos.blk t-msxdos.blk
 FILES += jed.blk flash.blk nesman.blk
-FILES += vt52.blk grp.blk t-grp.blk debug.blk t-debug.blk
+FILES += vt52.blk grp.blk t-grp.blk
+FILES += debug.blk t-debug.blk
 FILES += psg.blk t-psg.blk
-FILES += sc0.blk t-sc0.blk
+FILES += vtx1.blk t-vtx.blk
+FILES += vgr1.blk t-vgr.blk
 
 DIST_DIR=dist
 CC=gcc

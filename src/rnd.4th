@@ -2,6 +2,7 @@ rnd random number generators
 from https://www.cpcwiki.eu/index.php/Programming:Random_Number_Generator
 and  https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
 
+----
 decimal 2 capacity 1- thru
 
 ----

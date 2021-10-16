@@ -14,4 +14,3 @@
   a5 c, f9 c, c3 c, 09 c, d1 c, 4f c, ee c, 21 c, ( write seed )
   R> DP ! ( restore DP pointer )
   24 0 do rnd.LFSR loop .S wipe ;
-

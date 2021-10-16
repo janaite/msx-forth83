@@ -1,7 +1,6 @@
 rnd random number generators
 from https://www.cpcwiki.eu/index.php/Programming:Random_Number_Generator
 and  https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
-----
 
 decimal 2 capacity 1- thru
 
@@ -108,26 +107,3 @@ hex code rnd.val ( -- n )
   next
 end-code
 ----
-\ second 16-bit seed for LFSR/LCG generator
-variable rnd.seed2
-
-\ Combined 16-bit LFSR/LCG, 16-bit seeds
- rnd.seed1 lhld     \ ld hl,(seed1)
-    ld b,h
-    ld c,l
-    add hl,hl
-    add hl,hl
-    inc l
-    add hl,bc
-    ld (seed1),hl
-    ld hl,(seed2)
-    add hl,hl
-    sbc a,a
-    and %00101101
-    xor l
-    ld l,a
-    ld (seed2),hl
-    add hl,bc
-    ret
-
-

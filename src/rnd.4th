@@ -1,6 +1,6 @@
 rnd random number generators
 from https://www.cpcwiki.eu/index.php/Programming:Random_Number_Generator
-----
+and  https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
 
 decimal 2 capacity 1- thru
 
@@ -8,6 +8,56 @@ decimal 2 capacity 1- thru
 \ z80 unique instructions not found in 8080 assembly
 hex : (ldA,R)     0ed c, 5f c, ; immediate
 hex : (sbcHL,DE)  0ed c, 52 c, ; immediate
+hex : (rlC)       0cb c, 11 c, ; immediate
+hex : (rlA)       17 c,        ; immediate
+hex : (rlD)       0cb c, 12 c, ; immediate
+hex : (rlE)       0cb c, 13 c, ; immediate
+hex : (lddr)      0ed c, b8 c, ; immediate
+----
+\ alloc 64-bit seed used by the lfsr (1+7 bytes)
+variable rnd.seed/LFSR 7 allot
+
+\ 8-bit linear feedback shift register generator (1/3)
+hex code rnd.lfsr ( -- c )
+  b push                     \ push bc
+  rnd.seed/LFSR 4 + h lxi    \ ld hl,seed/LFSR + 4
+  m e mov                    \ ld e,(hl)
+  h inx                      \ inc hl
+  m d mov                    \ ld d,(hl)
+  h inx                      \ inc hl
+  m c mov                    \ ld c,(hl)
+  h inx                      \ inc hl
+  m a mov                    \ ld a,(hl)
+  a b mov                    \ ld b,a
+----
+\ 8-bit linear feedback shift register generator (2/3)
+  (rlE) (rlD)                \ rl e / rl d
+  (rlC) (rlA)                \ rl c / rla
+  (rlE) (rlD)                \ rl e / rl d
+  (rlC) (rlA)                \ rl c / rla
+  (rlE) (rlD)                \ rl e / rl d
+  (rlC) (rlA)                \ rl c / rla
+  a h mov                    \ ld h,a
+  (rlE) (rlD)                \ rl e / rl d
+  (rlC) (rlA)                \ rl c / rla
+  b xra                      \ xor b
+  (rlE) (rlD)                \ rl e / rl d
+  h xra                      \ xor h
+  c xra                      \ xor c
+  d xra                      \ xor d
+  rnd.seed/LFSR 6 + h lxi    \ ld hl,seed/LFSR + 6
+----
+\ 8-bit linear feedback shift register generator (3/3)
+  rnd.seed/LFSR 7 + d lxi    \ ld de,seed/LFSR + 7
+  7 b lxi                    \ ld bc,7
+  (lddr)                     \ lddr
+  d stax                     \ ld (de),a
+  b pop                      \ pop bc
+  0 h mvi                    \ ld h,0
+  a l mov                    \ ld l,a
+  h push                     \ push hl
+  next
+end-code
 ----
 \ seed of the 8-bit random number generator
 variable rnd.seedc

@@ -26,7 +26,7 @@ BLKS=$(addprefix $(DIST_DIR)/, $(FILES))
 vpath %.4th src
 vpath %.c src
 
-.PHONY : all
+.PHONY : all .DELETE_ON_ERROR
 all: $(CONVBLK) $(BLKS)
 
 $(DIST_DIR)/%.blk: %.4th

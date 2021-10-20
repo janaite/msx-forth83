@@ -114,13 +114,17 @@ proc done {} {
 }
 
 set renderer none
-diskmanipulator create forth.dsk 720k -dos1
-virtual_drive forth.dsk
-diskmanipulator format virtual_drive -dos1
-diskmanipulator import virtual_drive dsk/ [glob -type f dist/*.blk]
+machine C-BIOS_MSX2+
+ext ide
 
-machine Sony_HB-F1XV
-diska forth.dsk
+set power off
+diskmanipulator create hd.dsk -dos1 32M
+hda hd.dsk
+diskmanipulator format hda -dos1
+diskmanipulator import hda dsk/ [glob -type f dist/*.blk]
+diskmanipulator dir hda
+message "hd.dsk created"
+set power on
 
 # Speed up boot
 set save_settings_on_exit off

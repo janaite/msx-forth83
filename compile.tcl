@@ -14,15 +14,6 @@ proc wait_boot {{cmd ""}} {
 }
 
 #
-# Get current line on terminal
-#
-
-proc get_current_line {} {
-  set nl [string last "\n" [get_screen]]
-  return [string range [get_screen] [expr $nl + 1] end]
-}
-
-#
 # Get last message on terminal
 #
 
@@ -36,17 +27,21 @@ proc get_last_line {} {
 }
 
 #
-# Wait for response on last line
+# Powered up version of type
 #
 
-proc wait_response {msg cmd} {
+proc _check_type {msg cmd} {
   if {[string last $msg [get_last_line]] >= 0} {
     message "*match*"
     $cmd
   } elseif {[llength $cmd] > 0} {
-    #message "*after time 5 wait_response \"$msg\" $cmd"
-    after time 5 [list wait_response "$msg" $cmd]
+    after time 5 [list _check_type "$msg" $cmd]
   }
+}
+
+proc type! {str msg cmd} {
+  type "\b$str\r"
+  after time 5 [list _check_type "$msg" $cmd]
 }
 
 #
@@ -55,8 +50,7 @@ proc wait_response {msg cmd} {
 
 proc call_forth83 {} {
   message "Calling Forth83..."
-  type "F83\r"
-  wait_response "Version 2.1.0 Modified 01Jun84" open_blk_file
+  type! "F83" "Version 2.1.0 Modified 01Jun84" open_blk_file
 }
 
 proc open_blk_file {} {
@@ -65,8 +59,7 @@ proc open_blk_file {} {
   set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
 
   message "Opening $filename..."
-  type "OPEN $filename\r"
-  wait_response "OPEN $filename  ok" compile
+  type! "OPEN $filename" "OPEN $filename  ok" compile
 }
 
 proc compile {} {
@@ -74,8 +67,7 @@ proc compile {} {
   set path [lindex $blk_files 0]
   set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
   message "Compiling $filename..."
-  type "OK\r"
-  wait_response "OK  ok" summarize
+  type! "OK" "OK  ok" summarize
 }
 
 proc summarize {} {
@@ -92,20 +84,17 @@ proc summarize {} {
 
 proc save_system {} {
   message "Writing F83MSX.COM..."
-  type "SAVE-SYSTEM F83MSX.COM\r"
-  wait_response "SAVE-SYSTEM F83MSX.COM  ok" {bye}
+  type! "SAVE-SYSTEM F83MSX.COM" "SAVE-SYSTEM F83MSX.COM  ok" bye
 }
 
 proc bye {} {
   message "Closing Forth83..."
-  type "BYE\r"
-  wait_response "Pages" {replace_autoexec}
+  type! "BYE" "Pages" replace_autoexec
 }
 
 proc replace_autoexec {} {
   message "Replacing AUTOEXEC.BAT..."
-  type "COPY AUTOEXEC.BA2 AUTOEXEC.BAT\r"
-  wait_response "1 file copied" {done}
+  type! "COPY AUTOEXEC.BA2 AUTOEXEC.BAT" "1 file copied" done
 }
 
 proc done {} {
@@ -114,22 +103,25 @@ proc done {} {
 }
 
 set renderer none
-diskmanipulator create forth.dsk 720k -dos1
-virtual_drive forth.dsk
-diskmanipulator format virtual_drive -dos1
-diskmanipulator import virtual_drive dsk/ [glob -type f dist/*.blk]
+machine C-BIOS_MSX2
+ext ide
 
-machine Sony_HB-F1XV
-diska forth.dsk
+set power off
+diskmanipulator create hd.dsk 32M
+hda hd.dsk
+diskmanipulator import hda dsk/ [glob -type f dist/*.blk]
+diskmanipulator dir hda
+message "hd.dsk created"
+set power on
 
 # Speed up boot
 set save_settings_on_exit off
-set speed 9999
 set fullspeedwhenloading on
+set speed 9999
 
 # Debug
-ext debugdevice
-set debugoutput stdout
+#ext debugdevice
+#set debugoutput stdout
 #debug set_watchpoint write_io {0x2f} {} {message "$::wp_last_value received from debugdevice"}
 
 message "Detecting boot..."

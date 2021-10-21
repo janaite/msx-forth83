@@ -45,8 +45,9 @@ clean:
 
 .PHONY: test
 test: dsk
-	openmsx -script openmsx.tcl -machine Sony_HB-F1XV -ext video9000 -ext ASCII_MSX-DOS2 -diska forth.dsk
+	openmsx -script openmsx.tcl
 
 .PHONY: dsk
 dsk: $(CONVBLK) $(BLKS)
-	openmsx -script compile.tcl -machine Sony_HB-F1XV
+	openmsx -script compile.tcl
+

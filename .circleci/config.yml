@@ -11,29 +11,26 @@ orbs:
 jobs:
   build-job:
     docker:
-      - image: pvmm/msx-forth83:2.0
+      - image: pvmm/msx-forth83:latest
     environment:
       VERSION: << pipeline.parameters.version >>
     working_directory: /root/forth83
     steps:
       - checkout
-      - run: mkdir -p dsk && cp -f ../dsk/* dsk
+      - run: mkdir -p dsk && cp -vf ../dsk/* dsk/
       - run: make
       - run: ../docker-entrypoint.sh openmsx -script compile.tcl
-      - run: mv /root/forth83/forth.dsk /root/forth83/msx-forth83-latest.dsk
-      - run: cp /root/forth83/msx-forth83-latest.dsk /tmp/msx-forth83-latest.dsk
-      - run: mkdir /tmp/blk
-      - run: cp /root/forth83/dist/*.blk /tmp/blk
-      - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
+      - run: cp -vf hd.dsk /tmp/msx-forth83-latest.dsk
+      - run: mkdir -p /tmp/dist && cp -vf dist/*.blk /tmp/dist/
       - store_artifacts:
-          path: /root/msx-forth83-latest.dsk
+          path: /tmp/msx-forth83-latest.dsk
       - store_artifacts:
-          path: /tmp/blk/*.blk
+          path: /tmp/dist
       - persist_to_workspace:
           root: /tmp
           paths:
             - msx-forth83-latest.dsk
-            - blk/*
+            - dist/*
 
   deploy-job:
     docker:
@@ -46,9 +43,10 @@ jobs:
       - github-cli/setup:
           version: 2.0.0
       - github-cli/clone
-      - run: gh release delete latest -y
+      - run: echo "export PATH=/root/go/bin:$PATH" >> $BASH_ENV
+      - run: gh release delete latest -y || true
       - run: gh release create latest /tmp/msx-forth83-latest.dsk
-      - run: tar czf msx-forth83-blk.tar.gz -C /tmp/blk .
+      - run: tar czf msx-forth83-blk.tar.gz -C /tmp/dist .
       - run: gh release upload latest msx-forth83-blk.tar.gz
       #  - github-cli/release:
       #      draft: false

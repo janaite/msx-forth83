@@ -103,7 +103,7 @@ proc done {} {
 }
 
 set renderer none
-machine C-BIOS_MSX2
+machine C-BIOS_MSX2+
 ext ide
 
 set power off

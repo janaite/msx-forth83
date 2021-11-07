@@ -17,8 +17,13 @@ The Makefile should create all necessary files, just type:
 
 > make all
 
-It should generate all *.blk files into /dist directory. 
-Just copy them to your Forth83 instalation directory and have fun!
+It should generate all *.blk files inside /dist directory. Just copy them to your Forth83 instalation directory and have fun! Optionally, you could also type
+
+> make dsk
+
+to create a bootable HD image with all *.blk files (they are too big to fit in a single floppy) and run it on OpenMSX, WebMSX or even on a real MSX computer if you've got the Sunrise IDE interface. To start OpenMSX with the generated HD image you may type:
+
+> make test
 
 I'm using Forth 83 labeled F83v2-80 developed by Henry Laxen and Michael Perry and distributed inside "f83v2-80.ark" (MD5: 8c5017e406add5aa0dcd9e99a2514bc2). I have a mirror of it into https://github.com/janaite/forth83-80
 

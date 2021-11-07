@@ -41,7 +41,7 @@ RRM = rm -f -r
 clean:
 	$(RRM) bin/*
 	$(RRM) dist/*.blk
-	$(RRM) forth.dsk
+	$(RRM) hd.dsk.zip
 
 .PHONY: test
 test: dsk
@@ -50,4 +50,6 @@ test: dsk
 .PHONY: dsk
 dsk: $(CONVBLK) $(BLKS)
 	openmsx -script compile.tcl
+	@zip hd.dsk.zip hd.dsk
+	$(RRM) hd.dsk
 

@@ -1,3 +1,7 @@
+machine C-BIOS_MSX2+
+ext ide
+hda hd.dsk.zip
+
 ext debugdevice
 set debugoutput stdout
 

@@ -20,7 +20,8 @@ jobs:
       - run: mkdir -p dsk && cp -vf ../dsk/* dsk/
       - run: make
       - run: ../docker-entrypoint.sh openmsx -script compile.tcl
-      - run: cp -vf hd.dsk.zip /tmp/msx-forth83-latest.dsk.zip
+      - run: cp -vf hd.dsk /tmp/msx-forth83-latest.dsk
+      - run: zip /tmp/msx-forth83-latest.dsk.zip /tmp/msx-forth83-latest.dsk
       - run: mkdir -p /tmp/dist && cp -vf dist/*.blk /tmp/dist/
       - store_artifacts:
           path: /tmp/msx-forth83-latest.dsk.zip

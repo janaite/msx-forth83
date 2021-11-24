@@ -1,4 +1,6 @@
 set blk_files [list shift.blk msxbios.blk vt52.blk grp.blk debug.blk psg.blk vtx1.blk vgr1.blk]
+set test_files [glob -type f tests/t-*.blk]
+#[message $test_files]
 
 #
 # Wait for boot message "BOOT COMPLETED"
@@ -67,7 +69,7 @@ proc compile {} {
   set path [lindex $blk_files 0]
   set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
   message "Compiling $filename..."
-  type! "OK" "  ok" summarize
+  type! "OK" "OK  ok" summarize
 }
 
 proc summarize {} {
@@ -78,23 +80,20 @@ proc summarize {} {
   if {[llength $blk_files] > 0} {
     open_blk_file
   } else {
-    save_system
+    test_system
   }
 }
 
-proc save_system {} {
-  message "Writing F83MSX.COM..."
-  type! "SAVE-SYSTEM F83MSX.COM" "SAVE-SYSTEM F83MSX.COM  ok" bye
+proc test_system {} {
+  message "Testing modules..."
+  # >>Future tests go here<<
+  message "passed!"
+  bye
 }
 
 proc bye {} {
   message "Closing Forth83..."
-  type! "BYE" "Pages" replace_autoexec
-}
-
-proc replace_autoexec {} {
-  message "Replacing AUTOEXEC.BAT..."
-  type! "COPY AUTOEXEC.BA2 AUTOEXEC.BAT" "1 file copied" done
+  type! "BYE" "Pages" done
 }
 
 proc done {} {
@@ -107,21 +106,21 @@ machine C-BIOS_MSX2+
 ext ide
 
 set power off
-diskmanipulator create hd.dsk 32M
-hda hd.dsk
-diskmanipulator import hda dsk/ [glob -type f dist/*.blk]
+diskmanipulator create tests/hd.dsk 32M
+hda tests/hd.dsk
+diskmanipulator import hda dsk/ [glob -type f dist/*.blk] [glob -type f tests/*.blk]
 message "hd.dsk created"
 set power on
+
+# Debug
+ext debugdevice
+set debugoutput stdout
+#debug set_watchpoint write_io {0x2f} {} {message "$::wp_last_value received from debugdevice"}
 
 # Speed up boot
 set save_settings_on_exit off
 set fullspeedwhenloading on
 set speed 9999
-
-# Debug
-#ext debugdevice
-#set debugoutput stdout
-#debug set_watchpoint write_io {0x2f} {} {message "$::wp_last_value received from debugdevice"}
 
 message "Detecting boot..."
 wait_boot call_forth83

@@ -1,4 +1,6 @@
-set blk_files [list shift.blk msxbios.blk vt52.blk grp.blk debug.blk psg.blk vtx1.blk vgr1.blk]
+set fd [open "./blkfiles" "r"]
+set blkfiles [read $fd]
+#set blkfiles [list shift.blk msxbios.blk vt52.blk grp.blk debug.blk psg.blk vtx1.blk vgr1.blk]
 
 #
 # Wait for boot message "BOOT COMPLETED"
@@ -54,8 +56,8 @@ proc call_forth83 {} {
 }
 
 proc open_blk_file {} {
-  global blk_files
-  set path [lindex $blk_files 0]
+  global blkfiles
+  set path [lindex $blkfiles 0]
   set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
 
   message "Opening $filename..."
@@ -63,19 +65,19 @@ proc open_blk_file {} {
 }
 
 proc compile {} {
-  global blk_files
-  set path [lindex $blk_files 0]
+  global blkfiles
+  set path [lindex $blkfiles 0]
   set filename [string toupper [string range $path [expr {[string last "/" $path] + 1}] end]]
   message "Compiling $filename..."
   type! "OK" "  ok" summarize
 }
 
 proc summarize {} {
-  global blk_files
-  set blk_files [lrange $blk_files 1 end]
+  global blkfiles
+  set blkfiles [lrange $blkfiles 1 end]
   message "Done!"
 
-  if {[llength $blk_files] > 0} {
+  if {[llength $blkfiles] > 0} {
     open_blk_file
   } else {
     save_system

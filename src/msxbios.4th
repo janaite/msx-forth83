@@ -207,13 +207,21 @@ code INITXT ( S -- )
    B PUSH   (INITXT)   B POP   next
 end-code
 ----
-\ INIT32 ( S -- )
+\ INIT32 ( -- )
 hex
 F3BD constant #T32NAM   \ SCREEN 1 name table
 F3BF constant #T32COL   \ SCREEN 1 color table
 F3C1 constant #T32CGP   \ SCREEN 1 character pattern table
 F3C3 constant #T32ATR   \ SCREEN 1 sprite attribute table
 F3C5 constant #T32PAT   \ SCREEN 1 sprite pattern table
+
+: T32NAM@ ( -- vaddr)  #T32NAM @ ;
+: T32COL@ ( -- vaddr)  #T32COL @ ;
+: T32CGP@ ( -- vaddr)  #T32CGP @ ;
+: T32ATR@ ( -- vaddr)  #T32ATR @ ;
+: T32PAT@ ( -- vaddr)  #T32PAT @ ;
+----
+\ INIT32 ( -- )
 
 code INIT32 ( S -- )
    B PUSH   (INIT32)   B POP   next
@@ -557,4 +565,16 @@ code GTPDL ( pdlnum -- status)
  H PUSH
  next
 end-code
+----
+
+hex
+F922 constant #NAMBAS \ current VDP Name Table
+F924 constant #CGPBAS \ current VDP Character Pattern Table
+F926 constnat #PATBAS \ current VDP Sprite Pattern Table
+F928 constnat #ATRBAS \ current VDP Sprite Attribute Table
+
+: NAMBAS@ ( -- vaddr)  #NAMBAS @ ;
+: CGPBAS@ ( -- vaddr)  #CGPBAS @ ;
+: PATBAS@ ( -- vaddr)  #PATBAS @ ;
+: ATRBAS@ ( -- vaddr)  #ATRBAS @ ;
 ----
